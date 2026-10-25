@@ -1,0 +1,29 @@
+[package]
+name = "snack-manager"
+version = "0.1.0"
+description = "零食管家 —— 记录零食购买、库存与保质期"
+authors = ["Sylva123-56"]
+edition = "2021"
+rust-version = "1.77.2"
+
+[lib]
+name = "snack_manager_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-single-instance = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+# 体积优先：安装包目标 ≤ 15MB
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

@@ -1,0 +1,93 @@
+/* ============================================================
+   设计令牌 —— 「纸袋与焦糖」
+   底子是一张奶白的包装纸，主色是焦糖橙，状态色压得很克制。
+   深色模式由 JS 解析后写入 data-theme，避免媒体查询重复定义。
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* 底色与容器 */
+  --bg: #fff8ee;
+  --bg-veil: #fdf1e0;
+  --surface: #ffffff;
+  --surface-2: #fbefde;
+  --surface-3: #f5e3cd;
+  --line: #ebdcc8;
+  --line-strong: #dcc7ac;
+
+  /* 文字 */
+  --ink: #3b2a21;
+  --ink-soft: #7a6455;
+  --ink-faint: #a08a78;
+
+  /* 主色 */
+  --accent: #e8833a;
+  --accent-strong: #d06f27;
+  --accent-soft: #fdf0e3;
+  --accent-ring: rgba(232, 131, 58, 0.28);
+  --on-accent: #fffaf3;
+
+  /* 状态色：抹茶绿 / 芥末黄 / 辣椒红 / 灰 */
+  --ok: #4f7a52;
+  --ok-soft: #eef4ed;
+  --soon: #b9820d;
+  --soon-soft: #fdf4dd;
+  --danger: #c8452f;
+  --danger-soft: #fceeea;
+  --done: #94867c;
+  --done-soft: #f3efeb;
+
+  /* 尺寸 */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --sidebar-w: 292px;
+
+  /* 字体：不打包字体文件以守住体积，靠系统中文字重层次 */
+  --font-sans: 'Microsoft YaHei UI', 'Microsoft YaHei', 'Segoe UI', system-ui, -apple-system,
+    'Helvetica Neue', sans-serif;
+  --font-num: 'Segoe UI', 'Microsoft YaHei UI', system-ui, sans-serif;
+
+  /* 阴影：极浅，避免「卡片浮起来」的廉价感 */
+  --shadow-sm: 0 1px 2px rgba(79, 52, 34, 0.05);
+  --shadow: 0 2px 10px rgba(79, 52, 34, 0.07);
+  --shadow-lg: 0 14px 40px rgba(79, 52, 34, 0.16);
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #1a1512;
+  --bg-veil: #201a15;
+  --surface: #241c17;
+  --surface-2: #2c231d;
+  --surface-3: #382c24;
+  --line: #382d25;
+  --line-strong: #4a3b30;
+
+  --ink: #f1e4d4;
+  --ink-soft: #b9a795;
+  --ink-faint: #8c7a6a;
+
+  --accent: #f0954f;
+  --accent-strong: #ffa963;
+  --accent-soft: #35251a;
+  --accent-ring: rgba(240, 149, 79, 0.35);
+  --on-accent: #22160d;
+
+  --ok: #7dae80;
+  --ok-soft: #22301f;
+  --soon: #d9a53a;
+  --soon-soft: #332912;
+  --danger: #e2705c;
+  --danger-soft: #37201c;
+  --done: #94867c;
+  --done-soft: #2a2320;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 44px rgba(0, 0, 0, 0.55);
+}
