@@ -25,6 +25,12 @@ interface StoreValue {
   consumeEntry: (id: string, amount: number) => void
   setRemaining: (id: string, remaining: number) => void
   patchSettings: (patch: Partial<Settings>) => void
+  /** 导入-覆盖：仅替换记录，保留当前设置 */
+  replaceAll: (incoming: AppData) => void
+  /** 导入-合并：按 id 去重，updatedAt 较新者胜 */
+  mergeIn: (incoming: AppData) => void
+  /** 清空全部记录 */
+  clearAll: () => void
   /** 坏档时用 .bak 恢复 */
   recoverFromBackup: () => Promise<void>
   /** 坏档时从空白库重新开始（会先备份原文件） */
@@ -222,6 +228,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       consumeEntry: (id, amount) => dispatch({ type: 'consume', id, amount }),
       setRemaining: (id, remaining) => dispatch({ type: 'setRemaining', id, remaining }),
       patchSettings: (patch) => dispatch({ type: 'settings', patch }),
+      replaceAll: (incoming) => dispatch({ type: 'replace', data: incoming }),
+      mergeIn: (incoming) => dispatch({ type: 'merge', data: incoming }),
+      clearAll: () =>
+        dispatch({
+          type: 'replace',
+          data: { schemaVersion: 1, entries: [], settings: stateRef.current.data.settings },
+        }),
       recoverFromBackup: recoverFromBackupAction,
       startFresh: startFreshAction,
     }),

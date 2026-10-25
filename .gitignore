@@ -24,3 +24,8 @@ desktop.ini
 *.log
 npm-debug.log*
 pnpm-debug.log*
+
+# local verify artifacts
+.shots/
+scripts/seed.json
+
