@@ -44,10 +44,12 @@
   --radius-lg: 16px;
   --sidebar-w: 292px;
 
-  /* 字体：不打包字体文件以守住体积，靠系统中文字重层次 */
-  --font-sans: 'Microsoft YaHei UI', 'Microsoft YaHei', 'Segoe UI', system-ui, -apple-system,
-    'Helvetica Neue', sans-serif;
-  --font-num: 'Segoe UI', 'Microsoft YaHei UI', system-ui, sans-serif;
+  /* 字体：打包寒蝉圆体（GB2312 全量子集），雅黑只作兜底。
+     字体文件缺失或被禁用时会自动回落到系统字体，界面不会坏。 */
+  --font-sans: 'Chill Round', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Segoe UI', system-ui,
+    -apple-system, 'Helvetica Neue', sans-serif;
+  /* 数字单独一档：圆体的数字是等宽的，金额和日期不会跳动 */
+  --font-num: 'Chill Round', 'Segoe UI', 'Microsoft YaHei UI', system-ui, sans-serif;
 
   /* 阴影：极浅，避免「卡片浮起来」的廉价感 */
   --shadow-sm: 0 1px 2px rgba(79, 52, 34, 0.05);

@@ -15,16 +15,37 @@ Windows 11 单机应用，**完全离线**，一个 JSON 文件就是你的全�
 - **草稿留着**：填到一半点了窗口外面的暗处或按 Esc，窗口关掉但**内容不丢**，下次打开同一类表单接着填；点「取消」才算放弃。
 - **外观**：浅色（纸袋奶白）/ 深色 / 跟随系统三选一。窗口最小 820×560。
 
+## 字体
+
+界面用**寒蝉圆体**（ChillRoundGothic，SIL OFL 1.1），是把思源黑体做圆角化的现代黑体。子集覆盖 GB2312 全集 6763 汉字 + ASCII + 界面特殊符号，共 7556 个码位，所以常见零食名不会出现「一半圆一半方」的混排；`蒟蒻` 这类 GBK 生僻字仍会回落到系统雅黑，这是 GB2312 的边界，不是 bug。
+
+字体文件在 `src/assets/font/`，两档字重（常规 1.34 MB / 粗体 1.36 MB woff2），授权原文见同目录 `OFL.txt`。重新生成子集：
+
+```bash
+python -m pip install fonttools brotli
+pyftsubset ChillRoundGothic_Regular.otf \
+  --text-file=src/assets/font/chars-full.txt \
+  --flavor=woff2 --layout-features='kern,liga' --no-hinting --desubroutinize \
+  --output-file=src/assets/font/chill-full-regular.woff2
+```
+
+`chars-full.txt` 是「GB2312 全集 + ASCII + 符号 + 界面实际用字」的去重合并结果，加新界面文案时不必重建——界面用字是 GB2312 的子集。
+
+字重只装两档。CSS 里写的 500/550/600/650 由浏览器就近匹配到常规或粗体，不合成假粗体（圆体被合成加粗后圆角会糊）。
+
 ## 为什么这么小
 
 | | |
 |---|---|
-| 安装包 | **1.22 MB** |
-| 主程序 | **3.24 MB** |
-| 运行内存 | **约 28 MB** |
+| 安装包 | **3.93 MB** |
+| 主程序 | **5.91 MB** |
+| 运行内存 | **约 30 MB** |
 | 前端依赖 | 只有 React —— 没有 UI 框架、没有图标库、没有 CSS 预处理器 |
+| 字体 | 寒蝉圆体，GB2312 全量子集，两档字重共 **2.7 MB** |
 
 用的是 Tauri 2（Rust + 系统自带 WebView2），不是 Electron。界面全部手写 CSS，图标是内联 SVG。
+
+体积比不装字体时大了 2.7 MB，全部花在那套中文字体上。这是有意的取舍：系统雅黑在大字号下偏硬，圆体更配暖色纸袋的调性；而只打包界面用到的字（847 个）会让你自己输入的生僻零食名一半圆一半方，还不如不换。
 
 ## 开发
 
@@ -59,14 +80,15 @@ src/
   domain/     纯函数：日期运算、过期判定、统计、列表筛选排序、导入导出
   state/      reducer、持久化、草稿校验、主题
   components/ 界面组件
-  styles/     设计令牌与布局
+  assets/font/ 寒蝉圆体子集（woff2）与 OFL 授权
+  styles/     设计令牌、字体 @font-face 与布局
 src-tauri/    Rust 侧：文件读写（原子写 + 备份）、图片存取、导入导出对话框
 ```
 
 ## 验证
 
 ```bash
-pnpm test         # 180 个领域单测：日期跨月/闰年、四种状态边界、四档统计、导入去重、坏 JSON 拒绝
+pnpm test         # 187 个领域单测：日期跨月/闰年、四种状态边界、四档统计、导入去重、坏 JSON 拒绝
 cargo test        # Rust 侧重：原子写、.bak 轮转、非法 JSON 不覆盖、图片增删、base64 编码
 node scripts/e2e.mjs   # 端到端，驱动真实桌面应用
 ```
