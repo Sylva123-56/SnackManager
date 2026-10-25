@@ -1,7 +1,8 @@
 import { formatISODate, isValidDateParts, parseISODate } from './date'
 import { isCategoryKey, isShelfLifeUnit } from './catalog'
 import { DEFAULT_SETTINGS, SCHEMA_VERSION } from './types'
-import type { AppData, CategoryKey, Entry, ExpirySource, Settings, ShelfLifeUnit } from './types'
+import { makeBatch, newBatchId, syncEntry } from './batches'
+import type { AppData, Batch, CategoryKey, Entry, ExpirySource, Settings, ShelfLifeUnit } from './types'
 
 /**
  * 数据规范化与导入/导出。
@@ -96,7 +97,7 @@ export function normalizeEntry(raw: unknown, index: number): Entry | null {
   const createdAt = asString(obj.createdAt, 40) || new Date().toISOString()
   const updatedAt = asString(obj.updatedAt, 40) || createdAt
 
-  return {
+  return syncEntry({
     id,
     name: name || '未命名零食',
     brand: asString(obj.brand, 60).trim(),
@@ -104,6 +105,13 @@ export function normalizeEntry(raw: unknown, index: number): Entry | null {
     emoji: asString(obj.emoji, 8) || '🍿',
     imageFile: normalizeImageFile(obj.imageFile),
     barcode: asString(obj.barcode, 64).replace(/[^0-9A-Za-z-]/g, ''),
+    // 老数据（v1 早期）没有 batches，normalizeBatches 会按单批合成，
+    // 之后 syncEntry 再回填 quantity / expiryDate 等派生字段
+    batches: normalizeBatches(obj.batches, {
+      productionDate: pickIsoDate(obj.productionDate),
+      expiryDate,
+      quantity,
+    }),
     quantity,
     remaining,
     unitPrice,
@@ -116,7 +124,50 @@ export function normalizeEntry(raw: unknown, index: number): Entry | null {
     note: asString(obj.note, 500),
     createdAt,
     updatedAt,
+  })
+}
+
+const MAX_BATCHES = 60
+
+/**
+ * 解析批次数组。任一元素没有合法到期日就丢弃该元素；
+ * 一个都不剩时按单批合成，保证 batches 永不为空。
+ * 生产日期允许为空（只填了到期日的情况）。
+ */
+function normalizeBatches(
+  raw: unknown,
+  fallback: { productionDate: string | null; expiryDate: string; quantity: number },
+): Batch[] {
+  const out: Batch[] = []
+  if (Array.isArray(raw)) {
+    for (const item of raw) {
+      if (out.length >= MAX_BATCHES) break
+      if (typeof item !== 'object' || item === null) continue
+      const obj = item as Record<string, unknown>
+      const expiry = pickIsoDate(obj.expiryDate)
+      if (!expiry) continue
+      const qty = toInt(obj.quantity)
+      if (qty === null || qty < 1) continue
+      out.push({
+        id: asString(obj.id, 64) || newBatchId(),
+        productionDate: pickIsoDate(obj.productionDate),
+        expiryDate: expiry,
+        quantity: clampInt(qty, 1, MAX_QUANTITY),
+      })
+    }
   }
+
+  if (out.length === 0) {
+    return [makeBatch(fallback.productionDate, fallback.expiryDate, fallback.quantity)]
+  }
+
+  // 批次 id 重复会让 React key 冲突，统一去重
+  const seen = new Set<string>()
+  for (const batch of out) {
+    if (seen.has(batch.id)) batch.id = newBatchId()
+    seen.add(batch.id)
+  }
+  return out
 }
 
 function normalizeShelfLifeValue(value: unknown): number | null {

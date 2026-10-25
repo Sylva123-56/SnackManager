@@ -1,3 +1,4 @@
+import { addPacks, syncEntry } from '../domain/batches'
 import { todayISO } from '../domain/date'
 import { SCHEMA_VERSION } from '../domain/types'
 import type { AppData, Entry, Settings } from '../domain/types'
@@ -29,6 +30,7 @@ export type Action =
   | { type: 'update'; id: string; patch: Partial<Omit<Entry, 'id' | 'createdAt'>> }
   | { type: 'delete'; id: string }
   | { type: 'consume'; id: string; amount: number }
+  | { type: 'restock'; id: string; amount: number }
   | { type: 'setRemaining'; id: string; remaining: number }
   | { type: 'settings'; patch: Partial<Settings> }
   | { type: 'replace'; data: AppData }
@@ -79,29 +81,20 @@ export function reducer(state: AppState, action: Action): AppState {
 
     case 'add': {
       const now = new Date().toISOString()
-      const entry: Entry = {
+      const entry: Entry = syncEntry({
         ...action.entry,
         id: newId(),
-        quantity: Math.max(1, Math.trunc(action.entry.quantity)),
-        remaining: clampRemaining(action.entry.remaining, Math.max(1, action.entry.quantity)),
         createdAt: now,
         updatedAt: now,
-      }
+      })
       return { ...state, data: { ...state.data, entries: [entry, ...state.data.entries] } }
     }
 
     case 'update': {
       const now = new Date().toISOString()
-      const entries = state.data.entries.map((entry) => {
-        if (entry.id !== action.id) return entry
-        const merged = { ...entry, ...action.patch, updatedAt: now }
-        const quantity = Math.max(1, Math.trunc(merged.quantity))
-        return {
-          ...merged,
-          quantity,
-          remaining: clampRemaining(merged.remaining, quantity),
-        }
-      })
+      const entries = state.data.entries.map((entry) =>
+        entry.id === action.id ? syncEntry({ ...entry, ...action.patch, updatedAt: now }) : entry,
+      )
       return { ...state, data: { ...state.data, entries } }
     }
 
@@ -111,15 +104,27 @@ export function reducer(state: AppState, action: Action): AppState {
         data: { ...state.data, entries: state.data.entries.filter((e) => e.id !== action.id) },
       }
 
+    // 吃掉几包：只减总数，syncEntry 会按「先吃最早到期」重算整箱到期日
     case 'consume': {
       const now = new Date().toISOString()
       const entries = state.data.entries.map((entry) =>
         entry.id === action.id
-          ? {
+          ? syncEntry({
               ...entry,
               remaining: clampRemaining(entry.remaining - action.amount, entry.quantity),
               updatedAt: now,
-            }
+            })
+          : entry,
+      )
+      return { ...state, data: { ...state.data, entries } }
+    }
+
+    // 再加几包：算到最后到期的那一批上，先吃最早到期的规则不变
+    case 'restock': {
+      const now = new Date().toISOString()
+      const entries = state.data.entries.map((entry) =>
+        entry.id === action.id
+          ? { ...addPacks(entry, action.amount), updatedAt: now }
           : entry,
       )
       return { ...state, data: { ...state.data, entries } }
@@ -129,7 +134,7 @@ export function reducer(state: AppState, action: Action): AppState {
       const now = new Date().toISOString()
       const entries = state.data.entries.map((entry) =>
         entry.id === action.id
-          ? { ...entry, remaining: clampRemaining(action.remaining, entry.quantity), updatedAt: now }
+          ? syncEntry({ ...entry, remaining: clampRemaining(action.remaining, entry.quantity), updatedAt: now })
           : entry,
       )
       return { ...state, data: { ...state.data, entries } }

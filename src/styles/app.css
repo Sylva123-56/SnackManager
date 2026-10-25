@@ -735,6 +735,176 @@ button.alert-pill:active {
   font-style: italic;
 }
 
+/* ---------- 批次标签：一箱里日期不一样的那几包 ---------- */
+.row__batches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 5px;
+  list-style: none;
+}
+
+.batch-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.batch-tag__date {
+  font-variant-numeric: tabular-nums;
+}
+
+.batch-tag__stock {
+  color: var(--ink-faint);
+}
+
+.batch-tag__flag {
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+/* 快到期的那批：只加一道暖边，不用满屏红 */
+.batch-tag--urgent {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 8%, var(--surface));
+  border-color: color-mix(in srgb, var(--danger) 28%, var(--line));
+}
+
+.batch-tag--urgent .batch-tag__stock {
+  color: color-mix(in srgb, var(--danger) 70%, var(--ink-soft));
+}
+
+/* 已吃完的那批：整体退到背景里 */
+.batch-tag--empty {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+
+/* ---------- 表单里的批次编辑 ---------- */
+.batch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.batch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.batch-row--main {
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.batch-row__tag {
+  flex: 0 0 auto;
+  min-width: 34px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.batch-row__summary {
+  color: var(--ink-faint);
+}
+
+.batch-row__date {
+  flex: 0 0 136px;
+  padding: 5px 8px;
+  font-size: 12.5px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+
+.batch-row__qty {
+  flex: 0 0 58px;
+  padding: 5px 8px;
+  font-size: 12.5px;
+  text-align: center;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+
+.batch-row__unit {
+  color: var(--ink-faint);
+}
+
+.batch-row__remove {
+  margin-left: auto;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--ink-faint);
+}
+
+.batch-row__remove:hover {
+  color: var(--danger);
+}
+
+.batch-row__error {
+  flex: 1 1 100%;
+  margin-left: 42px;
+}
+
+/* 低调的加号入口：默认不占视觉重量 */
+.batch-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1px dashed var(--line);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.batch-add:hover {
+  color: var(--accent-strong);
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+
+.batch-add__mark {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .batch-add {
+    transition: none;
+  }
+}
+
 .row__hint--danger {
   color: var(--danger);
   font-weight: 550;

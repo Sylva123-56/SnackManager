@@ -1,9 +1,10 @@
+import { batchStocks } from '../domain/batches'
 import { categoryLabel } from '../domain/catalog'
 import { formatCN } from '../domain/date'
 import { expiryHint, statusOf } from '../domain/expiry'
 import type { Entry, ExpiryStatus } from '../domain/types'
 import { formatPrice } from '../format'
-import { IconCheck, IconEdit, IconMinus, IconPlus, IconTrash } from './icons'
+import { IconEdit, IconMinus, IconPlus, IconTrash } from './icons'
 
 interface Props {
   entry: Entry
@@ -12,7 +13,10 @@ interface Props {
   imageUrl: string | null
   onEdit: (entry: Entry) => void
   onConsume: (entry: Entry, amount: number) => void
-  onRestock: (entry: Entry) => void
+  /** 撤销一包：把刚刚吃掉的那包加回来，不改变批次 */
+  onUndoEat: (entry: Entry) => void
+  /** 再进一包：真的多买一包，算进最晚到期的那批 */
+  onAddPack: (entry: Entry) => void
   onDelete: (entry: Entry) => void
 }
 
@@ -23,11 +27,16 @@ const STATUS_TEXT: Record<ExpiryStatus, string> = {
   finished: '已吃完',
 }
 
-export function EntryRow({ entry, today, warnDays, imageUrl, onEdit, onConsume, onRestock, onDelete }: Props) {
+export function EntryRow({ entry, today, warnDays, imageUrl, onEdit, onConsume, onUndoEat, onAddPack, onDelete }: Props) {
   const status = statusOf(entry, today, warnDays)
   const remaining = entry.remaining
   const finished = remaining <= 0
   const progress = entry.quantity > 0 ? remaining / entry.quantity : 0
+  // 吃了一些但没吃完 → 加号是撤销一包；满箱或已吃完 → 加号是再进一包
+  const addingPacks = finished || remaining >= entry.quantity
+  const plusLabel = addingPacks ? '再进一包' : '加回一包'
+  const onPlus = () => (addingPacks ? onAddPack(entry) : onUndoEat(entry))
+  const stocks = batchStocks(entry)
 
   return (
     <li className={`row row--${status}`}>
@@ -59,6 +68,26 @@ export function EntryRow({ entry, today, warnDays, imageUrl, onEdit, onConsume, 
           <span className={`row__hint row__hint--${chipTone(status)}`}>{expiryHint(entry, today)}</span>
           {entry.note && <span className="row__note" title={entry.note}>{entry.note}</span>}
         </div>
+
+        {/* 一箱里日期不一样的几包：逐批写清楚，谁快到期一眼看见 */}
+        {stocks.length > 1 && (
+          <ul className="row__batches" aria-label="各批到期日">
+            {stocks.map((stock, index) => (
+              <li
+                key={stock.batch.id}
+                className={`batch-tag${stock.stock > 0 ? '' : ' batch-tag--empty'}${
+                  stock.isEarliest && stock.stock > 0 ? ' batch-tag--urgent' : ''
+                }`}
+              >
+                <span className="batch-tag__date tnum">{formatCN(stock.batch.expiryDate, today)}</span>
+                <span className="batch-tag__stock tnum">
+                  {stock.stock}/{stock.quantity}
+                </span>
+                {index === 0 && <span className="batch-tag__flag">先吃</span>}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="row__stock">
@@ -80,10 +109,9 @@ export function EntryRow({ entry, today, warnDays, imageUrl, onEdit, onConsume, 
           <button
             type="button"
             className="icon-btn stock__btn"
-            onClick={() => onRestock(entry)}
-            disabled={remaining >= entry.quantity}
-            title="加回一包"
-            aria-label={`${entry.name} 加回一包`}
+            onClick={onPlus}
+            title={plusLabel}
+            aria-label={`${entry.name} ${plusLabel}`}
           >
             <IconPlus size={14} />
           </button>
@@ -97,17 +125,6 @@ export function EntryRow({ entry, today, warnDays, imageUrl, onEdit, onConsume, 
       </div>
 
       <div className="row__actions">
-        {finished ? (
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={() => onRestock(entry)}
-            title="重新进货"
-            aria-label="重新进货"
-          >
-            <IconCheck size={14} />
-          </button>
-        ) : null}
         <button type="button" className="icon-btn" onClick={() => onEdit(entry)} title="编辑" aria-label={`编辑 ${entry.name}`}>
           <IconEdit size={14} />
         </button>

@@ -18,7 +18,8 @@ interface Props {
   onAdd: () => void
   onEdit: (entry: Entry) => void
   onConsume: (entry: Entry, amount: number) => void
-  onRestock: (entry: Entry) => void
+  onUndoEat: (entry: Entry) => void
+  onAddPack: (entry: Entry) => void
   onDelete: (entry: Entry) => void
 }
 
@@ -36,7 +37,8 @@ export function EntryList({
   onAdd,
   onEdit,
   onConsume,
-  onRestock,
+  onUndoEat,
+  onAddPack,
   onDelete,
 }: Props) {
   const [query, setQuery] = useState('')
@@ -174,7 +176,8 @@ export function EntryList({
               imageUrl={entry.imageFile ? images[entry.imageFile] ?? null : null}
               onEdit={onEdit}
               onConsume={onConsume}
-              onRestock={onRestock}
+              onUndoEat={onUndoEat}
+              onAddPack={onAddPack}
               onDelete={onDelete}
             />
           ))}

@@ -23,6 +23,7 @@ interface StoreValue {
   updateEntry: (id: string, patch: Partial<Omit<Entry, 'id' | 'createdAt'>>) => void
   deleteEntry: (id: string) => void
   consumeEntry: (id: string, amount: number) => void
+  restockEntry: (id: string, amount: number) => void
   setRemaining: (id: string, remaining: number) => void
   patchSettings: (patch: Partial<Settings>) => void
   /** 导入-覆盖：仅替换记录，保留当前设置 */
@@ -226,6 +227,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       updateEntry: (id, patch) => dispatch({ type: 'update', id, patch }),
       deleteEntry: (id) => dispatch({ type: 'delete', id }),
       consumeEntry: (id, amount) => dispatch({ type: 'consume', id, amount }),
+      restockEntry: (id, amount) => dispatch({ type: 'restock', id, amount }),
       setRemaining: (id, remaining) => dispatch({ type: 'setRemaining', id, remaining }),
       patchSettings: (patch) => dispatch({ type: 'settings', patch }),
       replaceAll: (incoming) => dispatch({ type: 'replace', data: incoming }),

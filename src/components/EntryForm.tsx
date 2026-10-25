@@ -6,7 +6,10 @@ import {
   draftFromEntry,
   draftFromSuggestion,
   emptyDraft,
+  mainQuantity,
+  makeDraftExtra,
   previewExpiry,
+  shelfLifeExpiry,
   suggestByName,
   validateDraft,
   type Draft,
@@ -45,15 +48,47 @@ export function EntryForm({ editing, entries, today, warnDays, onSubmit, onCance
   const set = <K extends keyof Draft>(key: K, value: Draft[K]) =>
     setDraft((prev) => ({ ...prev, [key]: value }))
 
+  // ---------- 批次：一整箱里生产日期不一样的那几包 ----------
+  function addExtra() {
+    setDraft((prev) => ({
+      ...prev,
+      extraBatches: [...prev.extraBatches, makeDraftExtra(prev.productionDate, '')],
+    }))
+  }
+
+  function removeExtra(id: string) {
+    setDraft((prev) => ({ ...prev, extraBatches: prev.extraBatches.filter((extra) => extra.id !== id) }))
+  }
+
+  function setExtra(id: string, key: 'productionDate' | 'quantity', value: string) {
+    setDraft((prev) => ({
+      ...prev,
+      extraBatches: prev.extraBatches.map((extra) => (extra.id === id ? { ...extra, [key]: value } : extra)),
+    }))
+  }
+
   const errors = useMemo(() => validateDraft(draft), [draft])
-  const derived = previewExpiry(draft)
+  // 推算出来的到期日（只读展示）；手填时为空
+  const derived = shelfLifeExpiry(draft)
+  const effectiveExpiry = previewExpiry(draft)
   const suggestions = useMemo(
     () => (showSuggestions && !editing ? suggestByName(entries, draft.name) : []),
     [showSuggestions, editing, entries, draft.name],
   )
 
   const errorCount = Object.keys(errors).length
-  const showError = (key: keyof typeof errors) => (touched && errors[key] ? errors[key] : undefined)
+  type MessageKey =
+  | 'name'
+  | 'quantity'
+  | 'remaining'
+  | 'unitPrice'
+  | 'purchasedAt'
+  | 'productionDate'
+  | 'shelfLifeValue'
+  | 'expiryDate'
+  | 'extra'
+
+const showError = (key: MessageKey): string | undefined => (touched ? errors[key] : undefined)
 
   function submit() {
     setTouched(true)
@@ -373,11 +408,73 @@ export function EntryForm({ editing, entries, today, warnDays, onSubmit, onCance
             </div>
           </div>
 
+          {/* ---------- 日期不同的那几包 ---------- */}
+          {draft.extraBatches.length > 0 && (
+            <div className="batch-list">
+              <div className="batch-row batch-row--main">
+                <span className="batch-row__tag">主批</span>
+                <span className="batch-row__summary">
+                  其余 {mainQuantity(draft) ?? '?'} 包 · 生产日期用上面这个
+                </span>
+              </div>
+              {draft.extraBatches.map((extra, index) => {
+                const rowError = touched ? errors.extraRows?.[extra.id] : undefined
+                return (
+                  <div className="batch-row" key={extra.id}>
+                    <span className="batch-row__tag">另 {index + 1}</span>
+                    <input
+                      type="date"
+                      className="batch-row__date tnum"
+                      max={today}
+                      value={extra.productionDate}
+                      aria-label={`第 ${index + 1} 批生产日期`}
+                      aria-invalid={rowError ? 'true' : undefined}
+                      onChange={(event) => setExtra(extra.id, 'productionDate', event.target.value)}
+                    />
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      className="batch-row__qty tnum"
+                      placeholder="0"
+                      value={extra.quantity}
+                      aria-label={`第 ${index + 1} 批包数`}
+                      aria-invalid={rowError ? 'true' : undefined}
+                      onChange={(event) => setExtra(extra.id, 'quantity', event.target.value.replace(/[^\d]/g, ''))}
+                    />
+                    <span className="batch-row__unit">包</span>
+                    <button
+                      type="button"
+                      className="icon-btn batch-row__remove"
+                      onClick={() => removeExtra(extra.id)}
+                      title="删掉这一批"
+                      aria-label={`删掉第 ${index + 1} 批`}
+                    >
+                      ×
+                    </button>
+                    {rowError && <span className="field__error batch-row__error">{rowError}</span>}
+                  </div>
+                )
+              })}
+              {showError('extra') && <span className="field__error">{showError('extra')}</span>}
+            </div>
+          )}
+
+          <button type="button" className="batch-add" onClick={addExtra}>
+            <span className="batch-add__mark" aria-hidden="true">
+              +
+            </span>
+            {draft.extraBatches.length === 0 ? '有些包生产日期不一样' : '再加一批日期不同的'}
+          </button>
+
           <div className="form-row">
             <div className="field" data-field="expiryDate">
               <label className="field__label" htmlFor={`${uid}-exp`}>
                 到期日
-                {derived && <span className="field__hint">（由生产日期+保质期自动算出）</span>}
+                {derived && (
+                  <span className="field__hint">
+                    {draft.extraBatches.length > 0 ? '（按最早到期的那批算）' : '（由生产日期+保质期自动算出）'}
+                  </span>
+                )}
               </label>
               <input
                 id={`${uid}-exp`}
@@ -394,7 +491,7 @@ export function EntryForm({ editing, entries, today, warnDays, onSubmit, onCance
 
             <div className="field field--preview">
               <span className="field__label">状态预览</span>
-              <ExpiryPreview iso={derived ?? draft.expiryDate} today={today} warnDays={warnDays} />
+              <ExpiryPreview iso={effectiveExpiry} today={today} warnDays={warnDays} />
             </div>
           </div>
         </fieldset>
@@ -446,7 +543,7 @@ function unitShort(unit: ShelfLifeUnit): string {
  * 状态预览：只认到期日，与列表里的判定同一套口径，
  * 免得表单说「还新鲜」、列表说「已过期」。
  */
-function ExpiryPreview({ iso, today, warnDays }: { iso: string; today: string; warnDays: number }) {
+function ExpiryPreview({ iso, today, warnDays }: { iso: string | null; today: string; warnDays: number }) {
   if (!iso) return <span className="preview-hint__muted">填完上面就知道了</span>
   const diff = daysBetweenISO(today, iso)
   if (diff === null) return <span className="preview-hint__muted">日期不合法</span>

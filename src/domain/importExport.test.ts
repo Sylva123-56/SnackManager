@@ -24,6 +24,7 @@ function makeEntry(overrides: Partial<Entry> = {}): Entry {
     emoji: '🥔',
     imageFile: null,
     barcode: '',
+    batches: [{ id: 'b1', productionDate: null, expiryDate: '2027-01-01', quantity: 2 }],
     quantity: 2,
     remaining: 2,
     unitPrice: 8.5,
@@ -169,6 +170,87 @@ describe('serialize / parse 往返', () => {
     const round = parseAppData(serializeAppData(data)).data
     expect(round.entries).toEqual(data.entries)
     expect(round.settings).toEqual(data.settings)
+  })
+})
+
+describe('批次兼容', () => {
+  it('没有 batches 字段的老数据被合成一批', () => {
+    const legacy = {
+      id: 'old-1',
+      name: '老数据薯片',
+      quantity: 4,
+      remaining: 1,
+      productionDate: '2026-08-01',
+      expiryDate: '2027-02-01',
+    }
+    const entry = normalizeEntry(legacy, 0)
+    expect(entry).not.toBeNull()
+    expect(entry!.batches).toHaveLength(1)
+    expect(entry!.batches[0]).toMatchObject({
+      productionDate: '2026-08-01',
+      expiryDate: '2027-02-01',
+      quantity: 4,
+    })
+    expect(entry!.quantity).toBe(4)
+    expect(entry!.remaining).toBe(1)
+  })
+
+  it('多个批次被原样读入并保留各自日期', () => {
+    const entry = normalizeEntry(
+      {
+        ...makeEntry(),
+        batches: [
+          { id: 'x1', productionDate: '2026-07-01', expiryDate: '2026-12-01', quantity: 3 },
+          { id: 'x2', productionDate: '2026-08-01', expiryDate: '2027-01-01', quantity: 2 },
+        ],
+        quantity: 5,
+        remaining: 5,
+      },
+      0,
+    )
+    expect(entry!.batches.map((b) => b.expiryDate)).toEqual(['2026-12-01', '2027-01-01'])
+    expect(entry!.quantity).toBe(5)
+    // 整箱到期日取最早那批
+    expect(entry!.expiryDate).toBe('2026-12-01')
+  })
+
+  it('坏掉的批次元素被丢弃，一个不剩就退化成单批', () => {
+    const entry = normalizeEntry(
+      { ...makeEntry(), batches: [{ id: 'x', expiryDate: 'not-a-date', quantity: 2 }] },
+      0,
+    )
+    expect(entry!.batches).toHaveLength(1)
+    expect(entry!.batches[0]?.expiryDate).toBe('2027-01-01')
+  })
+
+  it('批次 id 重复时自动改成唯一 id', () => {
+    const entry = normalizeEntry(
+      {
+        ...makeEntry(),
+        batches: [
+          { id: 'same', productionDate: null, expiryDate: '2026-12-01', quantity: 1 },
+          { id: 'same', productionDate: null, expiryDate: '2027-01-01', quantity: 1 },
+        ],
+      },
+      0,
+    )
+    const ids = entry!.batches.map((b) => b.id)
+    expect(new Set(ids).size).toBe(2)
+  })
+
+  it('批次包数之和决定总包数', () => {
+    const entry = normalizeEntry(
+      {
+        ...makeEntry(),
+        batches: [
+          { id: 'a', productionDate: null, expiryDate: '2026-12-01', quantity: 3 },
+          { id: 'b', productionDate: null, expiryDate: '2027-01-01', quantity: 4 },
+        ],
+        quantity: 99,
+      },
+      0,
+    )
+    expect(entry!.quantity).toBe(7)
   })
 })
 

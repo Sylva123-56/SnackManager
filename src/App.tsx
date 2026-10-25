@@ -32,6 +32,7 @@ export function App() {
     updateEntry,
     deleteEntry,
     consumeEntry,
+    restockEntry,
     setRemaining,
     patchSettings,
     replaceAll,
@@ -117,14 +118,16 @@ export function App() {
     closeDialog()
   }
 
-  function handleRestock(entry: Entry) {
-    if (entry.remaining >= entry.quantity) {
-      // 吃完了还想再买：把总包数 +1 并补满
-      updateEntry(entry.id, { quantity: entry.quantity + 1, remaining: entry.quantity + 1 })
-      setToast(`「${entry.name}」加了 1 包`)
-      return
-    }
+  // 撤销一包：把刚吃掉的那包加回来，批次不变
+  function handleUndoEat(entry: Entry) {
     setRemaining(entry.id, entry.remaining + 1)
+  }
+
+  // 再进一包：真的多一包，算进最晚到期的那批。
+  // 不能走 updateEntry 改 quantity —— 数量由批次派生，会被 syncEntry 改回去。
+  function handleAddPack(entry: Entry) {
+    restockEntry(entry.id, 1)
+    setToast(`「${entry.name}」再进 1 包`)
   }
 
   function handleConsume(entry: Entry, amount: number) {
@@ -322,7 +325,8 @@ export function App() {
               onAdd={() => setDialog({ kind: 'create' })}
               onEdit={(entry) => setDialog({ kind: 'edit', entry })}
               onConsume={handleConsume}
-              onRestock={handleRestock}
+              onUndoEat={handleUndoEat}
+              onAddPack={handleAddPack}
               onDelete={(entry) => setDialog({ kind: 'confirmDelete', entry })}
             />
           </main>

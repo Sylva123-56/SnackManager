@@ -4,6 +4,9 @@ import {
   draftFromSuggestion,
   draftToEntry,
   emptyDraft,
+  extraQuantityTotal,
+  mainQuantity,
+  previewBatches,
   previewExpiry,
   suggestByName,
   validateDraft,
@@ -22,6 +25,7 @@ function makeEntry(overrides: Partial<Entry> = {}): Entry {
     emoji: '🥔',
     imageFile: null,
     barcode: '',
+    batches: [{ id: 'b1', productionDate: '2026-09-01', expiryDate: '2027-03-01', quantity: 3 }],
     quantity: 3,
     remaining: 2,
     unitPrice: 8.5,
@@ -190,6 +194,132 @@ describe('draftFromEntry 往返', () => {
 
   it('无单价的记录草稿为空字符串', () => {
     expect(draftFromEntry(makeEntry({ unitPrice: null })).unitPrice).toBe('')
+  })
+})
+
+describe('草稿里的多批次', () => {
+  it('新草稿默认没有额外批次', () => {
+    expect(emptyDraft(TODAY).extraBatches).toEqual([])
+  })
+
+  it('加了几批就按几批算，主批包数自动扣掉', () => {
+    const draft: Draft = {
+      ...emptyDraft(TODAY),
+      name: '混合装',
+      quantity: '5',
+      remaining: '5',
+      productionDate: '2026-09-25',
+      shelfLifeValue: '1',
+      shelfLifeUnit: 'month',
+      extraBatches: [{ id: 'x', productionDate: '2026-10-02', quantity: '2' }],
+    }
+    expect(extraQuantityTotal(draft)).toBe(2)
+    expect(mainQuantity(draft)).toBe(3)
+    const batches = previewBatches(draft)
+    expect(batches).toHaveLength(2)
+    expect(batches[0]?.total).toBe(3)
+    expect(batches[0]?.expiryDate).toBe('2026-10-25')
+    expect(batches[1]?.total).toBe(2)
+    expect(batches[1]?.expiryDate).toBe('2026-11-02')
+  })
+
+  it('整箱到期日取最早的那批', () => {
+    const draft: Draft = {
+      ...emptyDraft(TODAY),
+      name: '混装',
+      quantity: '4',
+      remaining: '4',
+      productionDate: '2026-10-10',
+      shelfLifeValue: '6',
+      shelfLifeUnit: 'month',
+      extraBatches: [{ id: 'x', productionDate: '2026-09-01', quantity: '1' }],
+    }
+    // 9/1 那批更早到期
+    expect(previewExpiry(draft)).toBe('2027-03-01')
+  })
+
+  it('额外的包数不能等于或多于总包数', () => {
+    const draft: Draft = {
+      ...emptyDraft(TODAY),
+      name: '混装',
+      quantity: '3',
+      remaining: '3',
+      productionDate: '2026-09-25',
+      shelfLifeValue: '1',
+      extraBatches: [{ id: 'x', productionDate: '2026-10-02', quantity: '3' }],
+    }
+    const errors = validateDraft(draft)
+    expect(errors.extra).toContain('3')
+  })
+
+  it('推算模式下每批都必须有生产日期', () => {
+    const draft: Draft = {
+      ...emptyDraft(TODAY),
+      name: '混装',
+      quantity: '3',
+      remaining: '3',
+      productionDate: '2026-09-25',
+      shelfLifeValue: '1',
+      extraBatches: [{ id: 'x', productionDate: '', quantity: '1' }],
+    }
+    expect(validateDraft(draft).extraRows?.x).toBeTruthy()
+  })
+
+  it('每批至少 1 包', () => {
+    const draft: Draft = {
+      ...emptyDraft(TODAY),
+      name: '混装',
+      quantity: '3',
+      remaining: '3',
+      productionDate: '2026-09-25',
+      shelfLifeValue: '1',
+      extraBatches: [{ id: 'x', productionDate: '2026-10-02', quantity: '0' }],
+    }
+    expect(validateDraft(draft).extraRows?.x).toContain('1 包')
+  })
+
+  it('转成记录时批次结构与包数都对', () => {
+    const draft: Draft = {
+      ...emptyDraft(TODAY),
+      name: '混装',
+      quantity: '5',
+      remaining: '5',
+      productionDate: '2026-09-25',
+      shelfLifeValue: '1',
+      shelfLifeUnit: 'month',
+      extraBatches: [{ id: 'x', productionDate: '2026-10-02', quantity: '2' }],
+    }
+    const result = draftToEntry(draft)
+    expect(result).not.toBeNull()
+    const entry = result!.entry
+    expect(entry.batches).toHaveLength(2)
+    expect(entry.quantity).toBe(5)
+    expect(entry.expiryDate).toBe('2026-10-25')
+    expect(entry.productionDate).toBe('2026-09-25')
+    expect(entry.batches.map((b) => b.quantity).sort()).toEqual([2, 3])
+  })
+
+  it('编辑已有记录时，额外批次被还原到表单里', () => {
+    const entry = makeEntry({
+      batches: [
+        { id: 'a', productionDate: '2026-09-01', expiryDate: '2026-12-01', quantity: 3 },
+        { id: 'b', productionDate: '2026-10-01', expiryDate: '2027-01-01', quantity: 2 },
+      ],
+      quantity: 5,
+      expiryDate: '2026-12-01',
+      productionDate: '2026-09-01',
+    })
+    const draft = draftFromEntry(entry)
+    expect(draft.productionDate).toBe('2026-09-01')
+    expect(draft.extraBatches).toHaveLength(1)
+    expect(draft.extraBatches[0]).toMatchObject({ productionDate: '2026-10-01', quantity: '2' })
+  })
+
+  it('自动补全时不继承上次的批次', () => {
+    const entry = makeEntry()
+    const draft = draftFromSuggestion({ ...emptyDraft(TODAY), quantity: '3' }, entry)
+    expect(draft.extraBatches).toEqual([])
+    expect(draft.quantity).toBe('3')
   })
 })
 

@@ -34,6 +34,9 @@ export function computeExpiry(
  * - expiry < today → expired
  * - 0 <= expiry - today <= warnDays → expiring（到期当天算临期）
  * - 其余 → ok
+ *
+ * 一条记录可能有多批，此时 expiryDate 是最早到期那批的日期（见 syncEntry），
+ * 因此整箱状态按最急的那批算，不会把快过期的包藏起来。
  */
 export function statusOf(entry: Entry, today: string, warnDays: number): ExpiryStatus {
   if (entry.remaining <= 0) return 'finished'
