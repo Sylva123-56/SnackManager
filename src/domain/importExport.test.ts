@@ -24,6 +24,7 @@ function makeEntry(overrides: Partial<Entry> = {}): Entry {
     emoji: '🥔',
     imageFile: null,
     barcode: '',
+    isBox: false,
     batches: [{ id: 'b1', productionDate: null, expiryDate: '2027-01-01', quantity: 2 }],
     quantity: 2,
     remaining: 2,

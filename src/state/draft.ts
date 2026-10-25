@@ -27,6 +27,8 @@ export interface Draft {
   emoji: string
   imageFile: string | null
   barcode: string
+  /** 这条记录按「一整箱」记（箱里可能拆批次）；散包记录为 false */
+  isBox: boolean
   /** 整箱总包数 */
   quantity: string
   remaining: string
@@ -43,7 +45,7 @@ export interface Draft {
   note: string
 }
 
-export function emptyDraft(today: string): Draft {
+export function emptyDraft(today: string, isBox = false): Draft {
   return {
     name: '',
     brand: '',
@@ -51,6 +53,7 @@ export function emptyDraft(today: string): Draft {
     emoji: '🍿',
     imageFile: null,
     barcode: '',
+    isBox,
     quantity: '1',
     remaining: '1',
     unitPrice: '',
@@ -79,6 +82,7 @@ export function draftFromEntry(entry: Entry): Draft {
     emoji: entry.emoji,
     imageFile: entry.imageFile,
     barcode: entry.barcode,
+    isBox: entry.isBox,
     quantity: String(entry.quantity),
     remaining: String(entry.remaining),
     unitPrice: entry.unitPrice === null ? '' : String(entry.unitPrice),
@@ -340,6 +344,7 @@ export function draftToEntry(draft: Draft): DraftResult | null {
       emoji: draft.emoji || categoryMeta(draft.category).emoji,
       imageFile: draft.imageFile,
       barcode: draft.barcode.trim(),
+      isBox: draft.isBox,
       batches,
       quantity: quantitySum,
       remaining,

@@ -24,6 +24,12 @@ interface Props {
   entries: Entry[]
   today: string
   warnDays: number
+  /** 复用上次没填完的草稿（点窗口外面关掉时留下来的） */
+  initial?: Draft | null
+  /** 是否显示「有的包生产日期不一样」——只有整箱记录才用得上 */
+  allowBatches?: boolean
+  /** 每次改动都往外报一份，供关闭窗口时留存 */
+  onDraftChange?: (draft: Draft) => void
   onSubmit: (draft: Draft) => void
   onCancel: () => void
   onDelete?: (entry: Entry) => void
@@ -31,8 +37,21 @@ interface Props {
 
 const EMOJI_CHOICES = ['🍿', '🥔', '🍪', '🍬', '🍫', '🥜', '🥤', '🍮', '🍭', '🧁', '🍩', '🍇', '🥨', '🍡']
 
-export function EntryForm({ editing, entries, today, warnDays, onSubmit, onCancel, onDelete }: Props) {
-  const [draft, setDraft] = useState<Draft>(() => (editing ? draftFromEntry(editing) : emptyDraft(today)))
+export function EntryForm({
+  editing,
+  entries,
+  today,
+  warnDays,
+  initial = null,
+  allowBatches = false,
+  onDraftChange,
+  onSubmit,
+  onCancel,
+  onDelete,
+}: Props) {
+  const [draft, setDraft] = useState<Draft>(() =>
+    editing ? draftFromEntry(editing) : initial ?? emptyDraft(today, allowBatches),
+  )
   const [touched, setTouched] = useState(false)
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [suggestionIndex, setSuggestionIndex] = useState(-1)
@@ -44,6 +63,13 @@ export function EntryForm({ editing, entries, today, warnDays, onSubmit, onCance
     nameRef.current?.focus()
     nameRef.current?.select()
   }, [])
+
+  // 草稿变化时往外报一份：点窗口外面关掉时靠它留下已填的内容
+  const reportRef = useRef(onDraftChange)
+  reportRef.current = onDraftChange
+  useEffect(() => {
+    reportRef.current?.(draft)
+  }, [draft])
 
   const set = <K extends keyof Draft>(key: K, value: Draft[K]) =>
     setDraft((prev) => ({ ...prev, [key]: value }))
@@ -99,7 +125,8 @@ const showError = (key: MessageKey): string | undefined => (touched ? errors[key
       el?.focus()
       return
     }
-    onSubmit(draft)
+    // 是不是整箱由入口决定，别让草稿里的旧值把散包记录变成整箱
+    onSubmit({ ...draft, isBox: allowBatches || draft.isBox })
   }
 
   function applySuggestion(entry: Entry) {
@@ -188,7 +215,7 @@ const showError = (key: MessageKey): string | undefined => (touched ? errors[key
                       <span className="suggest__name">{item.displayName}</span>
                       {item.entry.brand && <span className="suggest__meta">{item.entry.brand}</span>}
                       <span className="suggest__meta tnum">
-                        {item.entry.shelfLifeValue ? `保质 ${item.entry.shelfLifeValue}${unitShort(item.entry.shelfLifeUnit)}` : '—'}
+                        {item.entry.shelfLifeValue ? `保质 ${item.entry.shelfLifeValue} ${unitShort(item.entry.shelfLifeUnit)}` : '—'}
                       </span>
                     </button>
                   </li>
@@ -271,7 +298,7 @@ const showError = (key: MessageKey): string | undefined => (touched ? errors[key
         <div className="form-row form-row--3">
           <div className="field" data-field="quantity">
             <label className="field__label" htmlFor={`${uid}-qty`}>
-              购买包数
+              {allowBatches ? '整箱共几包' : '购买包数'}
             </label>
             <input
               id={`${uid}-qty`}
@@ -390,7 +417,7 @@ const showError = (key: MessageKey): string | undefined => (touched ? errors[key
               {showError('shelfLifeValue') && <span className="field__error">{showError('shelfLifeValue')}</span>}
             </div>
 
-            <div className="field">
+            <div className="field" data-field="shelfLifeUnit">
               <label className="field__label" htmlFor={`${uid}-unit`}>
                 单位
               </label>
@@ -408,8 +435,8 @@ const showError = (key: MessageKey): string | undefined => (touched ? errors[key
             </div>
           </div>
 
-          {/* ---------- 日期不同的那几包 ---------- */}
-          {draft.extraBatches.length > 0 && (
+          {/* ---------- 日期不同的那几包：只有整箱记录才有 ---------- */}
+          {allowBatches && draft.extraBatches.length > 0 && (
             <div className="batch-list">
               <div className="batch-row batch-row--main">
                 <span className="batch-row__tag">主批</span>
@@ -459,12 +486,14 @@ const showError = (key: MessageKey): string | undefined => (touched ? errors[key
             </div>
           )}
 
-          <button type="button" className="batch-add" onClick={addExtra}>
-            <span className="batch-add__mark" aria-hidden="true">
-              +
-            </span>
-            {draft.extraBatches.length === 0 ? '有些包生产日期不一样' : '再加一批日期不同的'}
-          </button>
+          {allowBatches && (
+            <button type="button" className="batch-add" onClick={addExtra}>
+              <span className="batch-add__mark" aria-hidden="true">
+                +
+              </span>
+              {draft.extraBatches.length === 0 ? '有些包生产日期不一样' : '再加一批日期不同的'}
+            </button>
+          )}
 
           <div className="form-row">
             <div className="field" data-field="expiryDate">
@@ -474,8 +503,7 @@ const showError = (key: MessageKey): string | undefined => (touched ? errors[key
                   <span className="field__hint">
                     {draft.extraBatches.length > 0 ? '（按最早到期的那批算）' : '（由生产日期+保质期自动算出）'}
                   </span>
-                )}
-              </label>
+                )}              </label>
               <input
                 id={`${uid}-exp`}
                 type="date"
@@ -536,7 +564,7 @@ const showError = (key: MessageKey): string | undefined => (touched ? errors[key
 function unitShort(unit: ShelfLifeUnit): string {
   if (unit === 'day') return '天'
   if (unit === 'year') return '年'
-  return '个月'
+  return '月'
 }
 
 /**

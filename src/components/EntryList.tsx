@@ -5,7 +5,7 @@ import { countByStatus } from '../domain/expiry'
 import type { Entry, ListFilter, SortKey } from '../domain/types'
 import { loadImage } from '../state/backend'
 import { EntryRow } from './EntryRow'
-import { IconPlus, IconSearch } from './icons'
+import { IconArchive, IconPlus, IconSearch } from './icons'
 
 interface Props {
   entries: Entry[]
@@ -16,6 +16,8 @@ interface Props {
   onFilter: (filter: ListFilter) => void
   onSort: (sort: SortKey) => void
   onAdd: () => void
+  /** 一整箱：箱里可能有生产日期不同的几层 */
+  onAddBox: () => void
   onEdit: (entry: Entry) => void
   onConsume: (entry: Entry, amount: number) => void
   onUndoEat: (entry: Entry) => void
@@ -35,6 +37,7 @@ export function EntryList({
   onFilter,
   onSort,
   onAdd,
+  onAddBox,
   onEdit,
   onConsume,
   onUndoEat,
@@ -150,6 +153,16 @@ export function EntryList({
             <IconPlus size={14} />
             记录零食
             <kbd>Ctrl N</kbd>
+          </button>
+
+          <button
+            type="button"
+            className="btn btn--outline btn--sm"
+            onClick={onAddBox}
+            title="一整箱，箱里的包生产日期可能不一样"
+          >
+            <IconArchive size={14} />
+            记录整箱
           </button>
         </div>
       </div>

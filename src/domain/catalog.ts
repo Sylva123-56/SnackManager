@@ -34,7 +34,7 @@ export function categoryLabel(key: CategoryKey): string {
 
 export const SHELF_LIFE_UNITS: { key: ShelfLifeUnit; label: string; short: string }[] = [
   { key: 'day', label: '天', short: '天' },
-  { key: 'month', label: '个月', short: '月' },
+  { key: 'month', label: '月', short: '月' },
   { key: 'year', label: '年', short: '年' },
 ]
 

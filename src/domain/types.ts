@@ -53,6 +53,11 @@ export interface Entry {
   imageFile: string | null
   barcode: string
   /**
+   * 这条记录是不是「一整箱」。
+   * 只影响编辑时要不要显示「有的包生产日期不一样」；散包记录或老数据为 false。
+   */
+  isBox: boolean
+  /**
    * 箱内的批次。至少一批，各批 quantity 之和等于下面的 quantity。
    * 只有一批时它就是「整箱同一生产日期」的普通情况。
    */

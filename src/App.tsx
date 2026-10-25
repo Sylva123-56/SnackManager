@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { StatusBar } from './components/StatusBar'
 import { Sidebar } from './components/Sidebar'
 import { EntryList } from './components/EntryList'
@@ -7,11 +7,13 @@ import { Modal } from './components/Modal'
 import { SettingsModal } from './components/SettingsModal'
 import { ImportDialog, type PendingImport } from './components/ImportDialog'
 import { countByStatus, statusOf, totalRemaining } from './domain/expiry'
+import { batchesOf } from './domain/batches'
 import { statusBucketsByCount } from './domain/list'
 import { rangeStats, spendByCategory } from './domain/stats'
 import { backupFileName, buildBackup, parseBackup, serializeBackup } from './domain/importExport'
 import type { AppData, Entry, ListFilter, StatsRange } from './domain/types'
 import { draftToEntry, type Draft } from './state/draft'
+import { clearDraft, loadDraft, saveDraft } from './state/draftCache'
 import { useStore } from './state/store'
 import { isDesktop, dataDirInfo, exportText, importText, writeSideBackup } from './state/backend'
 import { useTheme } from './state/theme'
@@ -19,11 +21,14 @@ import { IconAlert, IconSnack } from './components/icons'
 
 type Dialog =
   | { kind: 'none' }
-  | { kind: 'create' }
+  | { kind: 'create'; mode: CreateMode }
   | { kind: 'edit'; entry: Entry }
   | { kind: 'settings' }
   | { kind: 'import'; pending: PendingImport }
   | { kind: 'confirmDelete'; entry: Entry }
+
+/** 一包散装零食，还是一整箱（箱里可能有生产日期不同的几层/几包） */
+type CreateMode = 'pack' | 'box'
 
 export function App() {
   const {
@@ -43,6 +48,14 @@ export function App() {
     flush,
   } = useStore()
   const [dialog, setDialog] = useState<Dialog>({ kind: 'none' })
+  // 「点了窗口外面」时留下来的草稿：下次打开同一类表单自动带回来。
+  // 点「取消」不算留存，直接丢掉。
+  // 从 localStorage 起步，顺手关了应用也还在。
+  const [keptDrafts, setKeptDrafts] = useState<Partial<Record<CreateMode, Draft>>>(() => ({
+    pack: loadDraft('pack') ?? undefined,
+    box: loadDraft('box') ?? undefined,
+  }))
+  const draftRef = useRef<Draft | null>(null)
   const [dataDir, setDataDir] = useState('')
   const [busy, setBusy] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
@@ -85,6 +98,35 @@ export function App() {
 
   const closeDialog = useCallback(() => setDialog({ kind: 'none' }), [])
 
+  /** 点「取消」：明确放弃，丢掉留存草稿 */
+  const cancelCreate = useCallback((mode: CreateMode) => {
+    draftRef.current = null
+    clearDraft(mode)
+    setKeptDrafts((prev) => {
+      if (!(mode in prev)) return prev
+      const next = { ...prev }
+      delete next[mode]
+      return next
+    })
+    setDialog({ kind: 'none' })
+  }, [])
+
+  /** 点窗口外面 / Esc / 右上角 ×：先放一边，留着已填的内容 */
+  const dismissCreate = useCallback((mode: CreateMode) => {
+    const draft = draftRef.current
+    draftRef.current = null
+    if (draft) {
+      saveDraft(mode, draft)
+      setKeptDrafts((prev) => ({ ...prev, [mode]: draft }))
+    }
+    setDialog({ kind: 'none' })
+  }, [])
+
+  const openCreate = useCallback((mode: CreateMode) => {
+    draftRef.current = null
+    setDialog({ kind: 'create', mode })
+  }, [])
+
   // ---------- 快捷键 ----------
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -93,7 +135,7 @@ export function App() {
         /^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName)
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'n') {
         event.preventDefault()
-        setDialog({ kind: 'create' })
+        openCreate('pack')
         return
       }
       if (event.key === 'Escape' && !typing) {
@@ -102,7 +144,7 @@ export function App() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  }, [openCreate])
 
   // ---------- 表单提交 ----------
   function submitDraft(draft: Draft) {
@@ -114,7 +156,19 @@ export function App() {
     } else {
       addEntry(result.entry)
       setToast(`已记下「${result.entry.name}」`)
+      // 真正写进去了，留存的草稿就没用了
+      if (dialog.kind === 'create') {
+        const done = dialog.mode
+        clearDraft(done)
+        setKeptDrafts((prev) => {
+          if (!(done in prev)) return prev
+          const next = { ...prev }
+          delete next[done]
+          return next
+        })
+      }
     }
+    draftRef.current = null
     closeDialog()
   }
 
@@ -322,7 +376,8 @@ export function App() {
               sort={settings.sort}
               onFilter={(filter: ListFilter) => patchSettings({ filter })}
               onSort={(sort) => patchSettings({ sort })}
-              onAdd={() => setDialog({ kind: 'create' })}
+              onAdd={() => openCreate('pack')}
+              onAddBox={() => openCreate('box')}
               onEdit={(entry) => setDialog({ kind: 'edit', entry })}
               onConsume={handleConsume}
               onUndoEat={handleUndoEat}
@@ -336,14 +391,28 @@ export function App() {
       </div>
 
       {dialog.kind === 'create' && (
-        <Modal title="记录一包零食" subtitle="带 * 的必填" onClose={closeDialog} size="wide">
+        <Modal
+          title={dialog.mode === 'box' ? '记录一整箱' : '记录一包零食'}
+          subtitle={
+            dialog.mode === 'box'
+              ? '一箱算一条记录，箱里的包日期不一样也没关系'
+              : '带 * 的必填'
+          }
+          onClose={() => cancelCreate(dialog.mode)}
+          onDismiss={() => dismissCreate(dialog.mode)}
+          size="wide"
+        >
           <EntryForm
             editing={null}
             entries={data.entries}
             today={today}
             warnDays={settings.warnDays}
+            allowBatches={dialog.mode === 'box'}
+            initial={keptDrafts[dialog.mode] ?? null}            onDraftChange={(next) => {
+              draftRef.current = next
+            }}
             onSubmit={submitDraft}
-            onCancel={closeDialog}
+            onCancel={() => cancelCreate(dialog.mode)}
           />
         </Modal>
       )}
@@ -355,6 +424,8 @@ export function App() {
             entries={data.entries.filter((entry) => entry.id !== dialog.entry.id)}
             today={today}
             warnDays={settings.warnDays}
+            /* 已经拆过批次的整箱记录，编辑时仍要能看见每一批 */
+            allowBatches={dialog.entry.isBox || batchesOf(dialog.entry).length > 1}
             onSubmit={submitDraft}
             onCancel={closeDialog}
             onDelete={(entry) => setDialog({ kind: 'confirmDelete', entry })}

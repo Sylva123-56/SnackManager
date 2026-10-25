@@ -4,7 +4,13 @@ import { IconClose } from './icons'
 interface Props {
   title: string
   subtitle?: string
+  /** 明确的取消动作（点「取消」、提交完成）——调用方可以据此丢弃临时内容 */
   onClose: () => void
+  /**
+   * 「先关上」的动作：点遮罩、右上角 ×、Esc。
+   * 表单用它区分「取消」和「先放一边」——后者应当留下已填的内容。
+   */
+  onDismiss?: () => void
   children: ReactNode
   footer?: ReactNode
   /** wide 用于编辑表单，narrow 用于确认框 */
@@ -16,9 +22,16 @@ interface Props {
  * 用原生 <dialog> 的语义（role + aria-modal），但不依赖 <dialog> 元素，
  * 以免 WebView2 各版本在滚动锁定上的差异。
  */
-export function Modal({ title, subtitle, onClose, children, footer, size = 'normal' }: Props) {
+export function Modal({ title, subtitle, onClose, onDismiss, children, footer, size = 'normal' }: Props) {
   const boxRef = useRef<HTMLDivElement>(null)
   const restoreRef = useRef<Element | null>(null)
+  const dismiss = onDismiss ?? onClose
+  // 用 ref 拿最新的关闭函数：否则每次父组件重渲染都会重建这个 effect，
+  // 把焦点抢回第一个输入框（表单打字时会一直丢焦点）
+  const dismissRef = useRef(dismiss)
+  useEffect(() => {
+    dismissRef.current = dismiss
+  })
 
   useEffect(() => {
     restoreRef.current = document.activeElement
@@ -30,7 +43,7 @@ export function Modal({ title, subtitle, onClose, children, footer, size = 'norm
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.stopPropagation()
-        onClose()
+        dismissRef.current()
       }
       if (event.key === 'Tab' && boxRef.current) {
         const focusables = [
@@ -57,11 +70,11 @@ export function Modal({ title, subtitle, onClose, children, footer, size = 'norm
       const back = restoreRef.current
       if (back instanceof HTMLElement) back.focus()
     }
-  }, [onClose])
+  }, [])
 
   return (
     <div className="modal" role="presentation">
-      <div className="modal__scrim" onClick={onClose} />
+      <div className="modal__scrim" onClick={dismiss} />
       <div
         ref={boxRef}
         className={`modal__box modal__box--${size}`}
@@ -74,7 +87,7 @@ export function Modal({ title, subtitle, onClose, children, footer, size = 'norm
             <h2 className="modal__title">{title}</h2>
             {subtitle && <p className="modal__subtitle">{subtitle}</p>}
           </div>
-          <button type="button" className="icon-btn" onClick={onClose} aria-label="关闭">
+          <button type="button" className="icon-btn" onClick={dismiss} aria-label="关闭">
             <IconClose size={16} />
           </button>
         </header>

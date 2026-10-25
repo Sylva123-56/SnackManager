@@ -105,6 +105,8 @@ export function normalizeEntry(raw: unknown, index: number): Entry | null {
     emoji: asString(obj.emoji, 8) || '🍿',
     imageFile: normalizeImageFile(obj.imageFile),
     barcode: asString(obj.barcode, 64).replace(/[^0-9A-Za-z-]/g, ''),
+    // 只认明确的 true：老备份没有这个字段，一律当散包记录
+    isBox: obj.isBox === true || obj.isBox === 'true',
     // 老数据（v1 早期）没有 batches，normalizeBatches 会按单批合成，
     // 之后 syncEntry 再回填 quantity / expiryDate 等派生字段
     batches: normalizeBatches(obj.batches, {

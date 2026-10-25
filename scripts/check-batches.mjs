@@ -116,9 +116,47 @@ await evaluate(`localStorage.removeItem('snack-manager:data')`)
 await send('Page.navigate', { url: URL })
 await sleep(1200)
 
-console.log('\n== 1. 打开表单，填一条两批的记录 ==')
+console.log('\n== 1. 打开「记录整箱」表单，填一条两批的记录 ==')
+// 散包表单不该有批次区：批次只属于「整箱」
 await evaluate(`document.querySelector('.list-panel__tools .btn--primary').click()`)
 await sleep(400)
+const packForm = await evaluate(`(() => {
+  const form = document.querySelector('.entry-form')
+  return {
+    title: document.querySelector('.modal__title')?.textContent.trim(),
+    hasBatchAdd: !!form?.querySelector('.batch-add'),
+    qtyLabel: form?.querySelector('[data-field="quantity"] label')?.textContent.trim(),
+  }
+})()`)
+console.log('  散包表单', packForm)
+check('散包表单没有「日期不一样」入口', packForm?.hasBatchAdd === false, packForm?.hasBatchAdd)
+check('散包表单标题是「记录一包零食」', packForm?.title === '记录一包零食', packForm?.title)
+await evaluate(`(() => {
+  const btn = [...document.querySelectorAll('.modal__foot button, .entry-form__footer button')].find((b) => b.textContent.trim() === '取消')
+  btn?.click()
+  return true
+})()`)
+await sleep(300)
+
+// 真正要测的是「记录整箱」
+await evaluate(`(() => {
+  const btn = [...document.querySelectorAll('.list-panel__tools button')].find((b) => b.textContent.includes('记录整箱'))
+  btn.click()
+  return true
+})()`)
+await sleep(400)
+const boxForm = await evaluate(`(() => {
+  const form = document.querySelector('.entry-form')
+  return {
+    title: document.querySelector('.modal__title')?.textContent.trim(),
+    hasBatchAdd: !!form?.querySelector('.batch-add'),
+    qtyLabel: form?.querySelector('[data-field="quantity"] label')?.textContent.trim(),
+  }
+})()`)
+console.log('  整箱表单', boxForm)
+check('整箱表单标题是「记录一整箱」', boxForm?.title === '记录一整箱', boxForm?.title)
+check('整箱表单有「日期不一样」入口', boxForm?.hasBatchAdd === true, boxForm?.hasBatchAdd)
+check('整箱表单的包数 label 是「整箱共几包」', boxForm?.qtyLabel?.includes('整箱共几包'), boxForm?.qtyLabel)
 
 const filled = await evaluate(`(() => {
   ${SET_INPUT}
@@ -172,7 +210,7 @@ const extraFilled = await evaluate(`(() => {
 console.log('  批次填写后', extraFilled)
 check('多出 1 行批次', extraFilled?.rows === 1, extraFilled?.rows)
 check('主批剩 3 包', extraFilled?.mainSummary?.includes('3'), extraFilled?.mainSummary)
-// 保质期单位默认「个月」：9/25 + 1 月 = 10/25，10/02 + 1 月 = 11/02
+// 保质期单位默认「月」：9/25 + 1 月 = 10/25，10/02 + 1 月 = 11/02
 check('到期日按最早那批算（10月25日）', extraFilled?.expiryReadonly === '2026-10-25', extraFilled?.expiryReadonly)
 check('到期日只读', extraFilled?.expiryReadOnly === true, extraFilled?.expiryReadOnly)
 
@@ -247,6 +285,60 @@ console.log('  落盘', JSON.stringify(stored))
 check('落盘有 2 个批次', stored?.batches?.length === 2, stored?.batches?.length)
 check('总包数为 5', stored?.quantity === 5, stored?.quantity)
 check('剩余 2 包已落盘', stored?.remaining === 2, stored?.remaining)
+
+console.log('\n== 6. 点窗口外面要留住已填内容，点「取消」不要留 ==')
+async function openPackForm() {
+  await evaluate(`(() => {
+    const btn = [...document.querySelectorAll('.list-panel__tools button')].find((b) => b.textContent.includes('记录零食'))
+    btn.click()
+    return true
+  })()`)
+  await sleep(350)
+}
+
+// 6a：填一半，点窗口外面关掉
+await openPackForm()
+await evaluate(`(() => {
+  ${SET_INPUT}
+  const form = document.querySelector('.entry-form')
+  setInput(form, '.form-row--name input', '还没填完的薯片')
+  return true
+})()`)
+await sleep(200)
+await evaluate(`document.querySelector('.modal__scrim').click()`)
+await sleep(400)
+check('点外面后窗口已关', await evaluate(`document.querySelectorAll('.modal').length`) === 0)
+
+await openPackForm()
+const kept = await evaluate(`document.querySelector('.entry-form .form-row--name input')?.value`)
+check('重新打开表单，刚填的名称还在', kept === '还没填完的薯片', kept)
+
+// 6b：再点「取消」，草稿应被清掉
+await evaluate(`(() => {
+  const btn = [...document.querySelectorAll('.modal button')].find((b) => b.textContent.trim() === '取消')
+  btn.click()
+  return true
+})()`)
+await sleep(400)
+await openPackForm()
+const afterCancel = await evaluate(`document.querySelector('.entry-form .form-row--name input')?.value`)
+check('点「取消」后草稿被清掉', afterCancel === '', afterCancel)
+
+// 6c：单位文案
+const units = await evaluate(`(() => {
+  const select = document.querySelector('[data-field="shelfLifeUnit"] select')
+  return select ? [...select.options].map((o) => o.textContent.trim()) : null
+})()`)
+check('保质期单位是「天 / 月 / 年」', JSON.stringify(units) === JSON.stringify(['天', '月', '年']), units)
+
+await evaluate(`(() => {
+  const btn = [...document.querySelectorAll('.modal button')].find((b) => b.textContent.trim() === '取消')
+  btn.click()
+  return true
+})()`)
+await sleep(200)
+// 别忘了把留存的草稿清干净，免得影响后面手动试用
+await evaluate(`localStorage.removeItem('snack-manager:draft')`)
 
 ws.close()
 child.kill()
