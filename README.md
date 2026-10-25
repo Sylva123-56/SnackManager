@@ -60,3 +60,22 @@ src/
   styles/     设计令牌与布局
 src-tauri/    Rust 侧：文件读写（原子写 + 备份）、图片存取、导入导出对话框
 ```
+
+## 验证
+
+```bash
+pnpm test         # 139 个领域单测：日期跨月/闰年、四种状态边界、四档统计、导入去重、坏 JSON 拒绝
+cargo test        # Rust 侧重：原子写、.bak 轮转、非法 JSON 不覆盖、图片增删、base64 编码
+node scripts/e2e.mjs   # 端到端，驱动真实桌面应用
+```
+
+端到端脚本用 CDP 连 WebView2，不需要 Playwright。跑之前先让应用带调试端口启动：
+
+```powershell
+$env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS='--remote-debugging-port=9333'
+.\src-tauri\target\release\snack-manager.exe
+```
+
+覆盖八组：空库引导 → Ctrl+N 建单 → 扣减库存 → 搜索过滤 → 防抖落盘 → 设置持久化 → 重载不丢 → 编辑入口。
+
+界面预览可用 `node scripts/shot.mjs <url> <out.png>`，同样是零依赖 CDP 截图。
