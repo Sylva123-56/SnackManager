@@ -17,6 +17,7 @@ import { clearDraft, loadDraft, saveDraft } from './state/draftCache'
 import { useStore } from './state/store'
 import { isDesktop, dataDirInfo, exportText, importText, writeSideBackup } from './state/backend'
 import { useTheme } from './state/theme'
+import { useFontSize } from './state/fontSize'
 import { IconAlert, IconSnack } from './components/icons'
 
 type Dialog =
@@ -64,6 +65,7 @@ export function App() {
   const settings = data.settings
 
   useTheme(settings.theme)
+  useFontSize(settings.fontSize)
 
   useEffect(() => {
     void dataDirInfo()

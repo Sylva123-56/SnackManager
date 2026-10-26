@@ -85,9 +85,16 @@ export interface Entry {
   updatedAt: string
 }
 
+/** 界面基准字号的可选范围（px）。整套样式都以它为 1rem，改它等于整体缩放 */
+export const MIN_FONT_SIZE = 11
+export const MAX_FONT_SIZE = 22
+export const DEFAULT_FONT_SIZE = 14
+
 export interface Settings {
   /** 临期阈值（天），默认 7 */
   warnDays: number
+  /** 界面基准字号（px），默认 14。所有尺寸都是它的倍数，所以放大后不会互相挤 */
+  fontSize: number
   theme: ThemeMode
   sort: SortKey
   statsRange: StatsRange
@@ -107,6 +114,7 @@ export const SCHEMA_VERSION = 1
 
 export const DEFAULT_SETTINGS: Settings = {
   warnDays: 7,
+  fontSize: DEFAULT_FONT_SIZE,
   theme: 'auto',
   sort: 'expiry',
   statsRange: '30d',

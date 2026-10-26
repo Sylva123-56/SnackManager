@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react'
-import type { Settings, ThemeMode } from '../domain/types'
+import {
+  DEFAULT_FONT_SIZE,
+  MAX_FONT_SIZE,
+  MIN_FONT_SIZE,
+  type Settings,
+  type ThemeMode,
+} from '../domain/types'
 import { Modal } from './Modal'
 
 interface Props {
@@ -22,6 +28,9 @@ const THEMES: { key: ThemeMode; label: string; hint: string }[] = [
 
 const WARN_PRESETS = [3, 7, 14, 30]
 
+/** 字号快捷档：小、默认、大、特大 */
+const FONT_PRESETS = [12, DEFAULT_FONT_SIZE, 16, 18]
+
 export function SettingsModal({
   settings,
   entryCount,
@@ -35,10 +44,15 @@ export function SettingsModal({
 }: Props) {
   const [confirmClear, setConfirmClear] = useState(false)
   const [warnInput, setWarnInput] = useState(String(settings.warnDays))
+  const [sizeInput, setSizeInput] = useState(String(settings.fontSize))
 
   useEffect(() => {
     setWarnInput(String(settings.warnDays))
   }, [settings.warnDays])
+
+  useEffect(() => {
+    setSizeInput(String(settings.fontSize))
+  }, [settings.fontSize])
 
   function commitWarn(raw: string) {
     const n = Number(raw)
@@ -49,6 +63,17 @@ export function SettingsModal({
     const clamped = Math.min(365, Math.max(0, Math.trunc(n)))
     onPatch({ warnDays: clamped })
     setWarnInput(String(clamped))
+  }
+
+  function commitSize(raw: string) {
+    const n = Number(raw)
+    if (!Number.isFinite(n) || raw.trim() === '') {
+      setSizeInput(String(settings.fontSize))
+      return
+    }
+    const clamped = Math.min(MAX_FONT_SIZE, Math.max(MIN_FONT_SIZE, Math.trunc(n)))
+    onPatch({ fontSize: clamped })
+    setSizeInput(String(clamped))
   }
 
   return (
@@ -111,6 +136,48 @@ export function SettingsModal({
               </button>
             ))}
           </div>
+        </section>
+
+        <section className="settings__section">
+          <h3 className="settings__title">字号</h3>
+          <p className="settings__text">
+            整个界面按这个字号等比缩放，字、间距、按钮高度一起长，不会挤在一起。
+          </p>
+          <div className="settings__row">
+            <div className="warn-presets" role="group" aria-label="字号快捷选择">
+              {FONT_PRESETS.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  className={`warn-preset${settings.fontSize === size ? ' is-active' : ''}`}
+                  onClick={() => onPatch({ fontSize: size })}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+            <div className="warn-custom">
+              <input
+                type="text"
+                inputMode="numeric"
+                className="tnum"
+                aria-label="自定义字号（px）"
+                value={sizeInput}
+                onChange={(event) => setSizeInput(event.target.value.replace(/[^\d]/g, ''))}
+                onBlur={(event) => commitSize(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault()
+                    commitSize(event.currentTarget.value)
+                  }
+                }}
+              />
+              <span className="settings__unit">px</span>
+            </div>
+          </div>
+          <p className="settings__hint">
+            可设 {MIN_FONT_SIZE}–{MAX_FONT_SIZE} px，超出范围会取最近的一头。
+          </p>
         </section>
 
         <section className="settings__section">

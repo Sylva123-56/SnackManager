@@ -39,10 +39,10 @@
   --done-soft: #f3efeb;
 
   /* 尺寸 */
-  --radius-sm: 8px;
-  --radius: 12px;
-  --radius-lg: 16px;
-  --sidebar-w: 292px;
+  --radius-sm: 0.571rem;
+  --radius: 0.857rem;
+  --radius-lg: 1.143rem;
+  --sidebar-w: 20.857rem;
 
   /* 字体：打包寒蝉圆体（GB2312 全量子集），雅黑只作兜底。
      字体文件缺失或被禁用时会自动回落到系统字体，界面不会坏。 */

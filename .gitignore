@@ -30,4 +30,5 @@ pnpm-debug.log*
 scripts/seed.json
 scripts/seed-batch.json
 scripts/seed-batch-dark.json
+scripts/seed-fs-*.json
 

@@ -30,7 +30,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  padding: 0 20px 0 4px;
+  padding: 0 1.429rem 0 0.286rem;
 }
 
 /* ---------- 启动与坏档 ---------- */
@@ -41,20 +41,20 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 40px;
+  gap: 0.714rem;
+  padding: 2.857rem;
   text-align: center;
 }
 
 .boot__mark {
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 18px;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1.286rem;
   background: var(--accent-soft);
   color: var(--accent);
-  margin-bottom: 4px;
+  margin-bottom: 0.286rem;
 }
 
 .boot__mark--danger {
@@ -64,7 +64,7 @@
 
 .boot__title {
   margin: 0;
-  font-size: 19px;
+  font-size: 1.357rem;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -73,7 +73,7 @@
   margin: 0;
   max-width: 46ch;
   color: var(--ink-soft);
-  font-size: 13.5px;
+  font-size: 0.964rem;
   line-height: 1.65;
 }
 
@@ -83,8 +83,8 @@
 
 .boot__actions {
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 0.714rem;
+  margin-top: 0.714rem;
 }
 
 /* ============================================================
@@ -95,7 +95,7 @@
 
 .statusbar {
   flex: none;
-  padding: 18px 24px 14px 24px;
+  padding: 1.286rem 1.714rem 1rem 1.714rem;
   background: var(--bg);
   border-bottom: 1px solid var(--line);
 }
@@ -103,18 +103,18 @@
 .statusbar__head {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 1.429rem;
 }
 
 .statusbar__figure {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 0.571rem;
   flex: none;
 }
 
 .statusbar__number {
-  font-size: 46px;
+  font-size: 3.286rem;
   font-weight: 650;
   line-height: 0.95;
   letter-spacing: -0.035em;
@@ -132,7 +132,7 @@
 }
 
 .statusbar__unit {
-  font-size: 13px;
+  font-size: 0.929rem;
   color: var(--ink-soft);
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -140,7 +140,7 @@
 
 .statusbar__alerts {
   display: flex;
-  gap: 8px;
+  gap: 0.571rem;
   flex-wrap: wrap;
   min-width: 0;
 }
@@ -148,11 +148,11 @@
 .alert-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 26px;
-  padding: 0 11px 0 9px;
+  gap: 0.429rem;
+  height: 1.857rem;
+  padding: 0 0.786rem 0 0.643rem;
   border-radius: 999px;
-  font-size: 12.5px;
+  font-size: 0.893rem;
   font-weight: 550;
   white-space: nowrap;
   transition: background-color 0.15s var(--ease), transform 0.1s var(--ease);
@@ -182,8 +182,8 @@ button.alert-pill:active {
 }
 
 .alert-pill__dot {
-  width: 6px;
-  height: 6px;
+  width: 0.429rem;
+  height: 0.429rem;
   border-radius: 50%;
   background: currentColor;
   flex: none;
@@ -191,7 +191,7 @@ button.alert-pill:active {
 
 .statusbar__today {
   margin-left: auto;
-  font-size: 12.5px;
+  font-size: 0.893rem;
   color: var(--ink-faint);
   flex: none;
 }
@@ -199,9 +199,9 @@ button.alert-pill:active {
 /* 分段条：按件数比例切分，段与段之间留 2px 缝当作分隔 */
 .statusbar__track {
   display: flex;
-  gap: 2px;
-  height: 5px;
-  margin-top: 12px;
+  gap: 0.143rem;
+  height: 0.357rem;
+  margin-top: 0.857rem;
   border-radius: 999px;
   overflow: hidden;
   background: var(--surface-2);
@@ -247,21 +247,21 @@ button.alert-pill:active {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 16px 16px 8px 20px;
+  padding: 1.143rem 1.143rem 0.571rem 1.429rem;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 1.286rem;
 }
 
 .panel {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.714rem;
 }
 
 .panel__title {
   margin: 0;
-  font-size: 11.5px;
+  font-size: 0.821rem;
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: none;
@@ -276,7 +276,7 @@ button.alert-pill:active {
 
 .panel__footnote {
   margin: 0;
-  font-size: 11.5px;
+  font-size: 0.821rem;
   color: var(--ink-faint);
   line-height: 1.5;
 }
@@ -292,14 +292,14 @@ button.alert-pill:active {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 0.5rem;
 }
 
 .inventory__row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: 0.571rem;
+  font-size: 0.929rem;
 }
 
 .inventory__row--muted .inventory__label,
@@ -308,8 +308,8 @@ button.alert-pill:active {
 }
 
 .inventory__dot {
-  width: 7px;
-  height: 7px;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
   flex: none;
 }
@@ -336,7 +336,7 @@ button.alert-pill:active {
 
 .inventory__value {
   margin-left: auto;
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--ink);
 }
@@ -345,16 +345,16 @@ button.alert-pill:active {
 .segmented {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 2px;
-  padding: 2px;
+  gap: 0.143rem;
+  padding: 0.143rem;
   background: var(--surface-2);
-  border-radius: 9px;
+  border-radius: 0.643rem;
 }
 
 .segmented__item {
-  height: 26px;
-  border-radius: 7px;
-  font-size: 11.5px;
+  height: 1.857rem;
+  border-radius: 0.5rem;
+  font-size: 0.821rem;
   font-weight: 500;
   color: var(--ink-soft);
   white-space: nowrap;
@@ -374,7 +374,7 @@ button.alert-pill:active {
 .metrics {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 0.571rem;
   margin: 0;
 }
 
@@ -383,14 +383,14 @@ button.alert-pill:active {
 }
 
 .metrics__item dt {
-  font-size: 11px;
+  font-size: 0.786rem;
   color: var(--ink-faint);
   margin-bottom: 1px;
 }
 
 .metrics__item dd {
   margin: 0;
-  font-size: 17px;
+  font-size: 1.214rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--ink);
@@ -400,7 +400,7 @@ button.alert-pill:active {
 }
 
 .metrics__currency {
-  font-size: 11px;
+  font-size: 0.786rem;
   font-weight: 500;
   color: var(--ink-soft);
   margin-right: 1px;
@@ -413,15 +413,15 @@ button.alert-pill:active {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.429rem;
 }
 
 .bars__row {
   display: grid;
-  grid-template-columns: 42px 1fr auto;
+  grid-template-columns: 3rem 1fr auto;
   align-items: center;
-  gap: 8px;
-  font-size: 11.5px;
+  gap: 0.571rem;
+  font-size: 0.821rem;
 }
 
 .bars__label {
@@ -432,7 +432,7 @@ button.alert-pill:active {
 }
 
 .bars__track {
-  height: 5px;
+  height: 0.357rem;
   border-radius: 999px;
   background: var(--surface-2);
   overflow: hidden;
@@ -449,25 +449,25 @@ button.alert-pill:active {
 
 .bars__value {
   color: var(--ink-faint);
-  font-size: 11px;
-  min-width: 38px;
+  font-size: 0.786rem;
+  min-width: 2.714rem;
   text-align: right;
 }
 
 /* 左栏底部操作区 */
 .sidebar__footer {
   flex: none;
-  padding: 10px 16px 12px 20px;
+  padding: 0.714rem 1.143rem 0.857rem 1.429rem;
   border-top: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.429rem;
 }
 
 .sidebar__actions {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 0.143rem;
 }
 
 /* ============================================================
@@ -479,33 +479,33 @@ button.alert-pill:active {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding-top: 14px;
+  padding-top: 1rem;
 }
 
 .list-panel__toolbar {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding-bottom: 10px;
+  gap: 0.857rem;
+  padding-bottom: 0.714rem;
   border-bottom: 1px solid var(--line);
   flex-wrap: wrap;
 }
 
 .tabs {
   display: flex;
-  gap: 2px;
+  gap: 0.143rem;
   min-width: 0;
 }
 
 .tabs__item {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  height: 28px;
-  padding: 0 9px;
-  border-radius: 7px;
-  font-size: 12.5px;
+  gap: 0.357rem;
+  height: 2rem;
+  padding: 0 0.643rem;
+  border-radius: 0.5rem;
+  font-size: 0.893rem;
   font-weight: 500;
   color: var(--ink-soft);
   white-space: nowrap;
@@ -528,7 +528,7 @@ button.alert-pill:active {
 }
 
 .tabs__count {
-  font-size: 10.5px;
+  font-size: 0.75rem;
   color: var(--ink-faint);
   font-weight: 500;
 }
@@ -539,13 +539,13 @@ button.alert-pill:active {
 }
 
 .tabs--inline {
-  margin-bottom: 14px;
+  margin-bottom: 1rem;
 }
 
 .list-panel__tools {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.571rem;
   margin-left: auto;
 }
 
@@ -553,10 +553,10 @@ button.alert-pill:active {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 6px;
-  height: 30px;
-  padding: 0 9px;
-  border-radius: 8px;
+  gap: 0.429rem;
+  height: 2.143rem;
+  padding: 0 0.643rem;
+  border-radius: 0.571rem;
   border: 1px solid var(--line);
   background: var(--surface);
   color: var(--ink-faint);
@@ -570,11 +570,11 @@ button.alert-pill:active {
 }
 
 .search input {
-  width: 152px;
+  width: 10.857rem;
   border: none;
   background: none;
   padding: 0;
-  font-size: 12.5px;
+  font-size: 0.893rem;
   color: var(--ink);
 }
 
@@ -590,10 +590,10 @@ button.alert-pill:active {
 }
 
 .sort-select select {
-  height: 30px;
+  height: 2.143rem;
   width: auto;
-  padding: 0 6px;
-  font-size: 12px;
+  padding: 0 0.429rem;
+  font-size: 0.857rem;
   color: var(--ink-soft);
   background: transparent;
   border-color: transparent;
@@ -606,7 +606,7 @@ button.alert-pill:active {
 }
 
 .list-panel__tools .btn kbd {
-  margin-left: 2px;
+  margin-left: 0.143rem;
   opacity: 0.7;
 }
 
@@ -615,7 +615,7 @@ button.alert-pill:active {
 .rows {
   list-style: none;
   margin: 0;
-  padding: 6px 0 14px 0;
+  padding: 0.429rem 0 1rem 0;
   overflow-y: auto;
   flex: 1;
   min-height: 0;
@@ -628,11 +628,11 @@ button.alert-pill:active {
    避免「一堆浮起的卡片」这种廉价感。 */
 .row {
   display: grid;
-  grid-template-columns: 38px minmax(0, 1fr) auto auto;
+  grid-template-columns: 2.714rem minmax(0, 1fr) auto auto;
   align-items: center;
-  gap: 12px;
-  padding: 9px 10px;
-  border-radius: 10px;
+  gap: 0.857rem;
+  padding: 0.643rem 0.714rem;
+  border-radius: 0.714rem;
   background: var(--surface);
   border: 1px solid transparent;
   transition: background-color 0.14s var(--ease), border-color 0.14s var(--ease);
@@ -661,9 +661,9 @@ button.alert-pill:active {
 }
 
 .row__thumb {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+  width: 2.714rem;
+  height: 2.714rem;
+  border-radius: 0.714rem;
   background: var(--surface-2);
   display: grid;
   place-items: center;
@@ -678,7 +678,7 @@ button.alert-pill:active {
 }
 
 .row__emoji {
-  font-size: 19px;
+  font-size: 1.357rem;
   line-height: 1;
 }
 
@@ -692,12 +692,12 @@ button.alert-pill:active {
 .row__title {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 0.5rem;
   min-width: 0;
 }
 
 .row__name {
-  font-size: 13.5px;
+  font-size: 0.964rem;
   font-weight: 550;
   color: var(--ink);
   text-align: left;
@@ -716,8 +716,8 @@ button.alert-pill:active {
 .row__expiry {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 11.5px;
+  gap: 0.571rem;
+  font-size: 0.821rem;
   color: var(--ink-faint);
   min-width: 0;
   white-space: nowrap;
@@ -739,17 +739,17 @@ button.alert-pill:active {
 .row__batches {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 5px;
+  gap: 0.286rem;
+  margin-top: 0.357rem;
   list-style: none;
 }
 
 .batch-tag {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 2px 7px;
-  font-size: 11px;
+  gap: 0.357rem;
+  padding: 0.143rem 0.5rem;
+  font-size: 0.786rem;
   line-height: 1.5;
   color: var(--ink-soft);
   background: var(--surface-2);
@@ -792,37 +792,37 @@ button.alert-pill:active {
 .batch-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 10px;
-  padding: 10px 12px;
+  gap: 0.429rem;
+  margin-top: 0.714rem;
+  padding: 0.714rem 0.857rem;
   background: var(--surface-2);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 0.714rem;
 }
 
 .batch-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
+  gap: 0.571rem;
+  font-size: 0.857rem;
   color: var(--ink-soft);
 }
 
 .batch-row--main {
-  padding-bottom: 6px;
+  padding-bottom: 0.429rem;
   border-bottom: 1px dashed var(--line);
 }
 
 .batch-row__tag {
   flex: 0 0 auto;
-  min-width: 34px;
-  padding: 1px 6px;
-  font-size: 11px;
+  min-width: 2.429rem;
+  padding: 1px 0.429rem;
+  font-size: 0.786rem;
   font-weight: 600;
   color: var(--ink-soft);
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 0.429rem;
   text-align: center;
 }
 
@@ -831,24 +831,24 @@ button.alert-pill:active {
 }
 
 .batch-row__date {
-  flex: 0 0 136px;
-  padding: 5px 8px;
-  font-size: 12.5px;
+  flex: 0 0 9.714rem;
+  padding: 0.357rem 0.571rem;
+  font-size: 0.893rem;
   color: var(--ink);
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 7px;
+  border-radius: 0.5rem;
 }
 
 .batch-row__qty {
-  flex: 0 0 58px;
-  padding: 5px 8px;
-  font-size: 12.5px;
+  flex: 0 0 4.143rem;
+  padding: 0.357rem 0.571rem;
+  font-size: 0.893rem;
   text-align: center;
   color: var(--ink);
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 7px;
+  border-radius: 0.5rem;
 }
 
 .batch-row__unit {
@@ -857,7 +857,7 @@ button.alert-pill:active {
 
 .batch-row__remove {
   margin-left: auto;
-  font-size: 15px;
+  font-size: 1.071rem;
   line-height: 1;
   color: var(--ink-faint);
 }
@@ -868,21 +868,21 @@ button.alert-pill:active {
 
 .batch-row__error {
   flex: 1 1 100%;
-  margin-left: 42px;
+  margin-left: 3rem;
 }
 
 /* 低调的加号入口：默认不占视觉重量 */
 .batch-add {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  margin-top: 8px;
-  padding: 4px 10px;
-  font-size: 12px;
+  gap: 0.357rem;
+  margin-top: 0.571rem;
+  padding: 0.286rem 0.714rem;
+  font-size: 0.857rem;
   color: var(--ink-soft);
   background: transparent;
   border: 1px dashed var(--line);
-  border-radius: 7px;
+  border-radius: 0.5rem;
   cursor: pointer;
   transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
 }
@@ -894,7 +894,7 @@ button.alert-pill:active {
 }
 
 .batch-add__mark {
-  font-size: 14px;
+  font-size: 1rem;
   line-height: 1;
   font-weight: 600;
 }
@@ -927,9 +927,9 @@ button.alert-pill:active {
 .row__stock {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 0.214rem;
   align-items: stretch;
-  width: 92px;
+  width: 6.571rem;
   flex: none;
 }
 
@@ -941,27 +941,27 @@ button.alert-pill:active {
 }
 
 .stock__btn {
-  width: 22px;
-  height: 22px;
-  border-radius: 5px;
+  width: 1.571rem;
+  height: 1.571rem;
+  border-radius: 0.357rem;
 }
 
 .stock__count {
-  font-size: 13px;
+  font-size: 0.929rem;
   font-weight: 600;
   color: var(--ink);
-  min-width: 42px;
+  min-width: 3rem;
   text-align: center;
 }
 
 .stock__total {
-  font-size: 10.5px;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--ink-faint);
 }
 
 .stock__bar {
-  height: 3px;
+  height: 0.214rem;
   border-radius: 999px;
   background: var(--surface-3);
   overflow: hidden;
@@ -1025,25 +1025,25 @@ button.alert-pill:active {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.571rem;
   text-align: center;
-  padding: 30px 20px 50px;
+  padding: 2.143rem 1.429rem 3.571rem;
 }
 
 .empty--compact {
-  gap: 10px;
+  gap: 0.714rem;
 }
 
 .empty__art {
-  font-size: 40px;
+  font-size: 2.857rem;
   line-height: 1;
   opacity: 0.9;
-  margin-bottom: 2px;
+  margin-bottom: 0.143rem;
 }
 
 .empty__title {
   margin: 0;
-  font-size: 14.5px;
+  font-size: 1.036rem;
   font-weight: 600;
   color: var(--ink);
 }
@@ -1051,13 +1051,13 @@ button.alert-pill:active {
 .empty__text {
   margin: 0;
   max-width: 34ch;
-  font-size: 12.5px;
+  font-size: 0.893rem;
   line-height: 1.65;
   color: var(--ink-faint);
 }
 
 .empty .btn {
-  margin-top: 6px;
+  margin-top: 0.429rem;
 }
 
 /* ============================================================
@@ -1066,12 +1066,12 @@ button.alert-pill:active {
 
 .savebar {
   flex: none;
-  height: 26px;
+  height: 1.857rem;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 24px;
-  font-size: 11px;
+  gap: 0.571rem;
+  padding: 0 1.714rem;
+  font-size: 0.786rem;
   color: var(--ink-faint);
   border-top: 1px solid var(--line);
   background: var(--bg-veil);
@@ -1088,8 +1088,8 @@ button.alert-pill:active {
 }
 
 .savebar__dot {
-  width: 5px;
-  height: 5px;
+  width: 0.357rem;
+  height: 0.357rem;
   border-radius: 50%;
   background: var(--accent);
   animation: pulse 1s ease-in-out infinite;
@@ -1107,7 +1107,7 @@ button.alert-pill:active {
 
 .savebar__warn {
   color: var(--danger);
-  margin-left: 4px;
+  margin-left: 0.286rem;
 }
 
 /* ============================================================
@@ -1120,7 +1120,7 @@ button.alert-pill:active {
   z-index: 50;
   display: grid;
   place-items: center;
-  padding: 24px;
+  padding: 1.714rem;
 }
 
 .modal__scrim {
@@ -1149,7 +1149,7 @@ button.alert-pill:active {
   width: 100%;
   /* 百分比 max-height 在 grid 居中项上解析不可靠，直接用视口上限兜住，
      否则窗口矮时表单底部按钮会被推到屏幕外。 */
-  max-height: calc(100vh - 48px);
+  max-height: calc(100vh - 3.429rem);
   display: flex;
   flex-direction: column;
   background: var(--surface);
@@ -1160,15 +1160,15 @@ button.alert-pill:active {
 }
 
 .modal__box--narrow {
-  max-width: 380px;
+  max-width: 27.143rem;
 }
 
 .modal__box--normal {
-  max-width: 520px;
+  max-width: 37.143rem;
 }
 
 .modal__box--wide {
-  max-width: 660px;
+  max-width: 47.143rem;
 }
 
 .modal__head {
@@ -1176,21 +1176,21 @@ button.alert-pill:active {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  padding: 16px 16px 12px 20px;
+  gap: 0.857rem;
+  padding: 1.143rem 1.143rem 0.857rem 1.429rem;
   border-bottom: 1px solid var(--line);
 }
 
 .modal__title {
   margin: 0;
-  font-size: 15px;
+  font-size: 1.071rem;
   font-weight: 600;
   letter-spacing: -0.005em;
 }
 
 .modal__subtitle {
-  margin: 2px 0 0;
-  font-size: 12px;
+  margin: 0.143rem 0 0;
+  font-size: 0.857rem;
   color: var(--ink-faint);
 }
 
@@ -1198,7 +1198,7 @@ button.alert-pill:active {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 16px 20px;
+  padding: 1.143rem 1.429rem;
 }
 
 .modal__foot {
@@ -1206,8 +1206,8 @@ button.alert-pill:active {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 12px 20px;
+  gap: 0.714rem;
+  padding: 0.857rem 1.429rem;
   border-top: 1px solid var(--line);
   background: var(--bg-veil);
 }
@@ -1219,13 +1219,13 @@ button.alert-pill:active {
 .entry-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 1rem;
 }
 
 .entry-form__body {
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 0.929rem;
 }
 
 /* 表单底部操作条：吸附在弹窗底部，窗口矮时也不用滚到底才能提交 */
@@ -1235,9 +1235,9 @@ button.alert-pill:active {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin: 2px -20px -16px;
-  padding: 12px 20px;
+  gap: 0.714rem;
+  margin: 0.143rem -20px -16px;
+  padding: 0.857rem 1.429rem;
   border-top: 1px solid var(--line);
   background: var(--bg-veil);
 }
@@ -1245,14 +1245,14 @@ button.alert-pill:active {
 .entry-form__foot-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.571rem;
   margin-left: auto;
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 0.857rem;
 }
 
 .form-row--3 {
@@ -1270,26 +1270,26 @@ button.alert-pill:active {
   left: 0;
   right: 0;
   z-index: 10;
-  margin: 4px 0 0;
-  padding: 4px;
+  margin: 0.286rem 0 0;
+  padding: 0.286rem;
   list-style: none;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
-  max-height: 214px;
+  max-height: 15.286rem;
   overflow-y: auto;
 }
 
 .suggest__item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.571rem;
   width: 100%;
-  padding: 6px 8px;
-  border-radius: 7px;
+  padding: 0.429rem 0.571rem;
+  border-radius: 0.5rem;
   text-align: left;
-  font-size: 12.5px;
+  font-size: 0.893rem;
   color: var(--ink);
 }
 
@@ -1299,7 +1299,7 @@ button.alert-pill:active {
 }
 
 .suggest__emoji {
-  font-size: 15px;
+  font-size: 1.071rem;
   line-height: 1;
 }
 
@@ -1312,35 +1312,35 @@ button.alert-pill:active {
 
 .suggest__meta {
   margin-left: auto;
-  font-size: 11px;
+  font-size: 0.786rem;
   color: var(--ink-faint);
   white-space: nowrap;
 }
 
 .suggest__meta + .suggest__meta {
-  margin-left: 8px;
+  margin-left: 0.571rem;
 }
 
 /* 外观 */
 .appearance {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.714rem;
   flex-wrap: wrap;
 }
 
 .image-pick {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.429rem;
   position: relative;
 }
 
 .image-pick__frame {
   position: relative;
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
+  width: 3.286rem;
+  height: 3.286rem;
+  border-radius: 0.857rem;
   background: var(--surface-2);
   border: 1px dashed var(--line-strong);
   display: grid;
@@ -1360,19 +1360,19 @@ button.alert-pill:active {
 }
 
 .image-pick__placeholder {
-  font-size: 22px;
+  font-size: 1.571rem;
   line-height: 1;
 }
 
 .image-pick__badge {
   position: absolute;
-  right: 2px;
-  bottom: 2px;
-  width: 15px;
-  height: 15px;
+  right: 0.143rem;
+  bottom: 0.143rem;
+  width: 1.071rem;
+  height: 1.071rem;
   display: grid;
   place-items: center;
-  border-radius: 5px;
+  border-radius: 0.357rem;
   background: rgba(255, 248, 238, 0.9);
   color: var(--ink-soft);
 }
@@ -1385,10 +1385,10 @@ button.alert-pill:active {
 }
 
 .emoji-btn {
-  width: 27px;
-  height: 27px;
-  border-radius: 7px;
-  font-size: 16px;
+  width: 1.929rem;
+  height: 1.929rem;
+  border-radius: 0.5rem;
+  font-size: 1.143rem;
   line-height: 1;
   display: grid;
   place-items: center;
@@ -1407,18 +1407,18 @@ button.alert-pill:active {
 .cat-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 0.286rem;
 }
 
 .cat-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  height: 27px;
-  padding: 0 9px;
-  border-radius: 7px;
+  gap: 0.286rem;
+  height: 1.929rem;
+  padding: 0 0.643rem;
+  border-radius: 0.5rem;
   background: var(--surface-2);
-  font-size: 12px;
+  font-size: 0.857rem;
   color: var(--ink-soft);
   transition: background-color 0.14s var(--ease), color 0.14s var(--ease);
 }
@@ -1439,21 +1439,21 @@ button.alert-pill:active {
    比给整块加边框更轻。 */
 .expiry-group {
   margin: 0;
-  padding: 2px 0 2px 11px;
+  padding: 0.143rem 0 0.143rem 0.786rem;
   border: none;
   border-left: 2px solid var(--surface-3);
   display: flex;
   flex-direction: column;
-  gap: 11px;
+  gap: 0.786rem;
 }
 
 .expiry-group__legend {
   padding: 0;
-  font-size: 11.5px;
+  font-size: 0.821rem;
   font-weight: 600;
   color: var(--ink-faint);
   letter-spacing: 0.05em;
-  margin-bottom: 2px;
+  margin-bottom: 0.143rem;
 }
 
 input.is-derived {
@@ -1465,18 +1465,18 @@ input.is-derived {
 .preview-hint {
   display: flex;
   align-items: center;
-  height: 32px;
+  height: 2.286rem;
 }
 
 .preview-hint__muted {
-  font-size: 11.5px;
+  font-size: 0.821rem;
   color: var(--ink-faint);
 }
 
 .barcode-row {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.286rem;
 }
 
 .barcode-row input {
@@ -1485,20 +1485,20 @@ input.is-derived {
 
 .barcode-row .icon-btn {
   flex: none;
-  height: 32px;
-  width: 30px;
+  height: 2.286rem;
+  width: 2.143rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   color: var(--ink-soft);
 }
 
 .barcode-match {
-  margin-top: 4px;
-  padding: 5px 8px;
-  border-radius: 7px;
+  margin-top: 0.286rem;
+  padding: 0.357rem 0.571rem;
+  border-radius: 0.5rem;
   background: var(--accent-soft);
   color: var(--accent-strong);
-  font-size: 11.5px;
+  font-size: 0.821rem;
   text-align: left;
   line-height: 1.4;
 }
@@ -1517,14 +1517,14 @@ input.is-derived {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 0.857rem;
   background: rgba(20, 13, 9, 0.82);
-  padding: 24px;
+  padding: 1.714rem;
 }
 
 .scanner__frame {
   position: relative;
-  width: min(440px, 100%);
+  width: min(31.429rem, 100%);
   aspect-ratio: 4 / 3;
   border-radius: var(--radius);
   overflow: hidden;
@@ -1540,26 +1540,26 @@ input.is-derived {
 .scanner__reticle {
   position: absolute;
   inset: 18% 12%;
-  border-radius: 10px;
+  border-radius: 0.714rem;
   box-shadow: 0 0 0 2px rgba(255, 248, 238, 0.7) inset, 0 0 0 9999px rgba(0, 0, 0, 0.28);
 }
 
 .scanner__close {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
+  top: 0.571rem;
+  right: 0.571rem;
+  width: 2rem;
+  height: 2rem;
   display: grid;
   place-items: center;
-  border-radius: 7px;
+  border-radius: 0.5rem;
   background: rgba(255, 248, 238, 0.92);
   color: #3b2a21;
 }
 
 .scanner__hint {
   margin: 0;
-  font-size: 12.5px;
+  font-size: 0.893rem;
   color: rgba(255, 248, 238, 0.86);
   text-align: center;
 }
@@ -1571,30 +1571,30 @@ input.is-derived {
 .settings {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.429rem;
 }
 
 .settings__section {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 0.5rem;
 }
 
 .settings__section--danger {
-  padding-top: 14px;
+  padding-top: 1rem;
   border-top: 1px solid var(--line);
 }
 
 .settings__title {
   margin: 0;
-  font-size: 12px;
+  font-size: 0.857rem;
   font-weight: 600;
   color: var(--ink);
 }
 
 .settings__text {
   margin: 0;
-  font-size: 12px;
+  font-size: 0.857rem;
   line-height: 1.65;
   color: var(--ink-soft);
 }
@@ -1603,37 +1603,44 @@ input.is-derived {
   color: var(--ink-faint);
 }
 
+.settings__hint {
+  margin: 0;
+  font-size: 0.786rem;
+  color: var(--ink-faint);
+  line-height: 1.5;
+}
+
 .settings__row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.571rem;
   flex-wrap: wrap;
 }
 
 .settings__path {
   margin: 0;
-  font-size: 10.5px;
+  font-size: 0.75rem;
   color: var(--ink-faint);
   word-break: break-all;
   line-height: 1.5;
 }
 
 .settings__unit {
-  font-size: 12px;
+  font-size: 0.857rem;
   color: var(--ink-soft);
 }
 
 .warn-presets {
   display: flex;
-  gap: 3px;
+  gap: 0.214rem;
 }
 
 .warn-preset {
-  height: 26px;
-  padding: 0 9px;
-  border-radius: 7px;
+  height: 1.857rem;
+  padding: 0 0.643rem;
+  border-radius: 0.5rem;
   background: var(--surface-2);
-  font-size: 11.5px;
+  font-size: 0.821rem;
   color: var(--ink-soft);
 }
 
@@ -1650,14 +1657,14 @@ input.is-derived {
 .warn-custom {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.286rem;
 }
 
 .warn-custom input {
-  width: 52px;
-  height: 26px;
-  padding: 0 7px;
-  font-size: 12px;
+  width: 3.714rem;
+  height: 1.857rem;
+  padding: 0 0.5rem;
+  font-size: 0.857rem;
   text-align: center;
 }
 
@@ -1665,14 +1672,14 @@ input.is-derived {
 .theme-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 0.571rem;
 }
 
 .theme-card {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 8px;
+  gap: 0.286rem;
+  padding: 0.571rem;
   border-radius: var(--radius);
   border: 1.5px solid var(--line);
   background: var(--surface);
@@ -1689,8 +1696,8 @@ input.is-derived {
 }
 
 .theme-card__swatch {
-  height: 22px;
-  border-radius: 7px;
+  height: 1.571rem;
+  border-radius: 0.5rem;
   border: 1px solid var(--line);
 }
 
@@ -1708,13 +1715,13 @@ input.is-derived {
 }
 
 .theme-card__label {
-  font-size: 12px;
+  font-size: 0.857rem;
   font-weight: 550;
   color: var(--ink);
 }
 
 .theme-card__hint {
-  font-size: 10.5px;
+  font-size: 0.75rem;
   color: var(--ink-faint);
   line-height: 1.35;
 }
@@ -1725,14 +1732,14 @@ input.is-derived {
 
 .import-foot {
   display: flex;
-  gap: 8px;
+  gap: 0.571rem;
   margin-left: auto;
 }
 
 .import-summary {
   display: flex;
   flex-direction: column;
-  gap: 11px;
+  gap: 0.786rem;
 }
 
 .import-summary strong {
@@ -1742,11 +1749,11 @@ input.is-derived {
 
 .import-names {
   margin: 0;
-  font-size: 12px;
+  font-size: 0.857rem;
   line-height: 1.6;
   color: var(--ink-soft);
-  padding: 8px 10px;
-  border-radius: 8px;
+  padding: 0.571rem 0.714rem;
+  border-radius: 0.571rem;
   background: var(--surface-2);
 }
 
@@ -1754,24 +1761,24 @@ input.is-derived {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 0.643rem;
 }
 
 .import-compare > div {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.143rem;
 }
 
 .import-compare dt {
-  font-size: 11.5px;
+  font-size: 0.821rem;
   font-weight: 600;
   color: var(--ink);
 }
 
 .import-compare dd {
   margin: 0;
-  font-size: 12px;
+  font-size: 0.857rem;
   line-height: 1.55;
   color: var(--ink-soft);
 }
@@ -1787,17 +1794,17 @@ input.is-derived {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  max-height: 300px;
+  max-height: 21.429rem;
   overflow-y: auto;
 }
 
 .import-list__row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 6px;
-  border-radius: 6px;
-  font-size: 12.5px;
+  gap: 0.571rem;
+  padding: 0.357rem 0.429rem;
+  border-radius: 0.429rem;
+  font-size: 0.893rem;
 }
 
 .import-list__row:nth-child(odd) {
@@ -1813,18 +1820,18 @@ input.is-derived {
 
 .import-list__meta {
   margin-left: auto;
-  font-size: 11px;
+  font-size: 0.786rem;
   color: var(--ink-faint);
   white-space: nowrap;
 }
 
 .import-list__meta + .import-list__meta {
-  margin-left: 10px;
+  margin-left: 0.714rem;
 }
 
 .import-list__more {
-  padding: 7px 6px;
-  font-size: 11.5px;
+  padding: 0.5rem 0.429rem;
+  font-size: 0.821rem;
   color: var(--ink-faint);
   text-align: center;
 }
@@ -1846,14 +1853,14 @@ input.is-derived {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: 40px;
+  bottom: 2.857rem;
   transform: translateX(-50%);
   z-index: 70;
-  padding: 8px 15px;
+  padding: 0.571rem 1.071rem;
   border-radius: 999px;
   background: var(--ink);
   color: var(--bg);
-  font-size: 12.5px;
+  font-size: 0.893rem;
   font-weight: 500;
   box-shadow: var(--shadow-lg);
   animation: toast-in 0.18s var(--ease);
@@ -1876,27 +1883,27 @@ input.is-derived {
 
 @media (max-width: 940px) {
   :root {
-    --sidebar-w: 258px;
+    --sidebar-w: 18.429rem;
   }
 
   .app__main {
-    padding: 0 14px 0 2px;
+    padding: 0 1rem 0 0.143rem;
   }
 
   .statusbar {
-    padding: 14px 18px 12px 18px;
+    padding: 1rem 1.286rem 0.857rem 1.286rem;
   }
 
   .statusbar__number {
-    font-size: 38px;
+    font-size: 2.714rem;
   }
 
   .search input {
-    width: 110px;
+    width: 7.857rem;
   }
 
   .row {
-    grid-template-columns: 34px minmax(0, 1fr) auto;
+    grid-template-columns: 2.429rem minmax(0, 1fr) auto;
   }
 
   .row__actions {
@@ -1904,26 +1911,26 @@ input.is-derived {
   }
 
   .row__thumb {
-    width: 34px;
-    height: 34px;
+    width: 2.429rem;
+    height: 2.429rem;
   }
 }
 
 @media (max-height: 620px) {
   .statusbar {
-    padding-top: 11px;
-    padding-bottom: 9px;
+    padding-top: 0.786rem;
+    padding-bottom: 0.643rem;
   }
 
   .statusbar__number {
-    font-size: 34px;
+    font-size: 2.429rem;
   }
 
   .statusbar__track {
-    margin-top: 9px;
+    margin-top: 0.643rem;
   }
 
   .sidebar__scroll {
-    gap: 13px;
+    gap: 0.929rem;
   }
 }

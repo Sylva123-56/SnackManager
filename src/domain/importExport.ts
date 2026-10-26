@@ -1,6 +1,6 @@
 import { formatISODate, isValidDateParts, parseISODate } from './date'
 import { isCategoryKey, isShelfLifeUnit } from './catalog'
-import { DEFAULT_SETTINGS, SCHEMA_VERSION } from './types'
+import { DEFAULT_SETTINGS, MAX_FONT_SIZE, MIN_FONT_SIZE, SCHEMA_VERSION } from './types'
 import { makeBatch, newBatchId, syncEntry } from './batches'
 import type { AppData, Batch, CategoryKey, Entry, ExpirySource, Settings, ShelfLifeUnit } from './types'
 
@@ -195,6 +195,10 @@ export function normalizeSettings(raw: unknown): Settings {
     warnDaysRaw === null || warnDaysRaw < 0
       ? DEFAULT_SETTINGS.warnDays
       : Math.min(365, warnDaysRaw)
+  // 字号：非法值回落到默认，超出可视范围的夹取回来（太小看不清，太大放不下）
+  const fontSizeRaw = toInt(obj.fontSize)
+  const fontSize =
+    fontSizeRaw === null ? DEFAULT_SETTINGS.fontSize : clampInt(fontSizeRaw, MIN_FONT_SIZE, MAX_FONT_SIZE)
   const theme = obj.theme === 'light' || obj.theme === 'dark' || obj.theme === 'auto' ? obj.theme : 'auto'
   const sort =
     obj.sort === 'expiry' || obj.sort === 'purchasedAt' || obj.sort === 'name' ? obj.sort : 'expiry'
@@ -210,7 +214,7 @@ export function normalizeSettings(raw: unknown): Settings {
     obj.filter === 'finished'
       ? obj.filter
       : 'all'
-  return { warnDays, theme, sort, statsRange, filter }
+  return { warnDays, fontSize, theme, sort, statsRange, filter }
 }
 
 /**

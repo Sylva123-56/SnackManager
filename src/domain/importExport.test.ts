@@ -12,7 +12,7 @@ import {
   serializeAppData,
   serializeBackup,
 } from './importExport'
-import { DEFAULT_SETTINGS, emptyData } from './types'
+import { DEFAULT_FONT_SIZE, DEFAULT_SETTINGS, MAX_FONT_SIZE, MIN_FONT_SIZE, emptyData } from './types'
 import type { AppData, Entry } from './types'
 
 function makeEntry(overrides: Partial<Entry> = {}): Entry {
@@ -157,7 +157,22 @@ describe('normalizeSettings', () => {
 
   it('合法值被保留，warnDays 夹取到 0-365', () => {
     const s = normalizeSettings({ warnDays: 999, theme: 'dark', sort: 'name', statsRange: 'all', filter: 'expired' })
-    expect(s).toEqual({ warnDays: 365, theme: 'dark', sort: 'name', statsRange: 'all', filter: 'expired' })
+    expect(s).toEqual({
+      warnDays: 365,
+      fontSize: DEFAULT_FONT_SIZE,
+      theme: 'dark',
+      sort: 'name',
+      statsRange: 'all',
+      filter: 'expired',
+    })
+  })
+
+  it('fontSize 夹取到 11-22，非数字回落默认', () => {
+    expect(normalizeSettings({ fontSize: 40 }).fontSize).toBe(MAX_FONT_SIZE)
+    expect(normalizeSettings({ fontSize: 3 }).fontSize).toBe(MIN_FONT_SIZE)
+    expect(normalizeSettings({ fontSize: 17 }).fontSize).toBe(17)
+    expect(normalizeSettings({ fontSize: 'abc' }).fontSize).toBe(DEFAULT_FONT_SIZE)
+    expect(normalizeSettings({}).fontSize).toBe(DEFAULT_FONT_SIZE)
   })
 })
 
