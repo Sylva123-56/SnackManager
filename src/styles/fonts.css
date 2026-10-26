@@ -1,9 +1,9 @@
 /* ============================================================
-   字体 —— 寒蝉圆体（ChillRoundGothic）
-   圆角化的思源黑体，配暖色纸袋调性比系统雅黑柔和。
+   字体 —— 寒蝉全圆体（ChillRoundF）
+   圆角化的思源黑体升级版，笔画端点本身就是圆的。
 
-   子集覆盖 GB2312 全集（6763 汉字）+ ASCII + 界面特殊符号，
-   共 7556 个码位；常规 1.31 MB、粗体 1.36 MB woff2。
+   全量打包，不裁剪：14304 个码位 / 15865 个字形，常规 3.06 MB、
+   粗体 3.22 MB woff2。生僻零食名（蒟蒻、鬱）不会再和系统雅黑混排。
    授权 SIL Open Font License 1.1，见 src/assets/font/OFL.txt。
 
    只装常规与粗体两档。界面里 500 落到常规、550/600/650 落到粗体，
@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Chill Round';
-  src: url('../assets/font/chill-full-regular.woff2') format('woff2');
+  src: url('../assets/font/chillf-regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Chill Round';
-  src: url('../assets/font/chill-full-bold.woff2') format('woff2');
+  src: url('../assets/font/chillf-bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;

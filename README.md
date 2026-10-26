@@ -17,19 +17,20 @@ Windows 11 单机应用，**完全离线**，一个 JSON 文件就是你的全�
 
 ## 字体
 
-界面用**寒蝉圆体**（ChillRoundGothic，SIL OFL 1.1），是把思源黑体做圆角化的现代黑体。子集覆盖 GB2312 全集 6763 汉字 + ASCII + 界面特殊符号，共 7556 个码位，所以常见零食名不会出现「一半圆一半方」的混排；`蒟蒻` 这类 GBK 生僻字仍会回落到系统雅黑，这是 GB2312 的边界，不是 bug。
+界面用**寒蝉全圆体**（ChillRoundF v3.200，SIL OFL 1.1）——寒蝉圆黑体的全圆角版本，笔画端点本身就是圆的。**全量打包，不做子集裁剪**：14304 个码位 / 15865 个字形，所以你输入什么零食名都不会出现「一半圆一半方」的混排，`蒟蒻`、`鬱` 这类 GBK / 繁体字也照样有。
 
-字体文件在 `src/assets/font/`，两档字重（常规 1.34 MB / 粗体 1.36 MB woff2），授权原文见同目录 `OFL.txt`。重新生成子集：
+字体文件在 `src/assets/font/`，两档字重（常规 3.06 MB / 粗体 3.22 MB woff2），授权原文见同目录 `OFL.txt`。从官方 OTF 重新生成：
 
 ```bash
 python -m pip install fonttools brotli
-pyftsubset ChillRoundGothic_Regular.otf \
-  --text-file=src/assets/font/chars-full.txt \
+# 不裁剪字形，只做 woff2 压缩（Brotli）并去掉 hinting
+python -m fontTools.subset ChillRoundFRegular.otf \
+  --glyphs='*' \
   --flavor=woff2 --layout-features='kern,liga' --no-hinting --desubroutinize \
-  --output-file=src/assets/font/chill-full-regular.woff2
+  --output-file=src/assets/font/chillf-regular.woff2
 ```
 
-`chars-full.txt` 是「GB2312 全集 + ASCII + 符号 + 界面实际用字」的去重合并结果，加新界面文案时不必重建——界面用字是 GB2312 的子集。
+源文件下载自 [Warren2060/ChillRound](https://github.com/Warren2060/ChillRound/releases/tag/v3.200)（v3.200，2024-05-09）。转换后体积约为原 OTF 的一半，中文字形曲线数据本身没法再压，3 MB 就是这套字体的下限。
 
 字重只装两档。CSS 里写的 500/550/600/650 由浏览器就近匹配到常规或粗体，不合成假粗体（圆体被合成加粗后圆角会糊）。
 
@@ -37,15 +38,15 @@ pyftsubset ChillRoundGothic_Regular.otf \
 
 | | |
 |---|---|
-| 安装包 | **3.93 MB** |
-| 主程序 | **5.91 MB** |
+| 安装包 | **7.58 MB** |
+| 主程序 | **9.52 MB** |
 | 运行内存 | **约 30 MB** |
 | 前端依赖 | 只有 React —— 没有 UI 框架、没有图标库、没有 CSS 预处理器 |
-| 字体 | 寒蝉圆体，GB2312 全量子集，两档字重共 **2.7 MB** |
+| 字体 | 寒蝉全圆体，全量不裁剪，两档字重共 **6.3 MB** |
 
 用的是 Tauri 2（Rust + 系统自带 WebView2），不是 Electron。界面全部手写 CSS，图标是内联 SVG。
 
-体积比不装字体时大了 2.7 MB，全部花在那套中文字体上。这是有意的取舍：系统雅黑在大字号下偏硬，圆体更配暖色纸袋的调性；而只打包界面用到的字（847 个）会让你自己输入的生僻零食名一半圆一半方，还不如不换。
+体积比不装字体时大了 6.3 MB，全部花在那套中文字体上。这是有意的取舍：系统雅黑在大字号下偏硬，圆体的圆头笔画更配暖色纸袋的调性；而裁掉字形会让你自己输入的生僻零食名一半圆一半方，所以干脆全量打包——14304 个码位，一个字都不缺。
 
 ## 开发
 
@@ -82,7 +83,7 @@ src/
   domain/     纯函数：日期运算、过期判定、统计、列表筛选排序、导入导出
   state/      reducer、持久化、草稿校验、主题、字号
   components/ 界面组件
-  assets/font/ 寒蝉圆体子集（woff2）与 OFL 授权
+  assets/font/ 寒蝉全圆体（woff2）与 OFL 授权
   styles/     设计令牌、字体 @font-face 与布局
 src-tauri/    Rust 侧：文件读写（原子写 + 备份）、图片存取、导入导出对话框
 ```

@@ -31,4 +31,5 @@ scripts/seed.json
 scripts/seed-batch.json
 scripts/seed-batch-dark.json
 scripts/seed-fs-*.json
-
+scripts/seed-rare.json
+scripts/seed-rare-dark.json

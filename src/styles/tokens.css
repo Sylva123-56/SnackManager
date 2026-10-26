@@ -44,7 +44,7 @@
   --radius-lg: 1.143rem;
   --sidebar-w: 20.857rem;
 
-  /* 字体：打包寒蝉圆体（GB2312 全量子集），雅黑只作兜底。
+  /* 字体：打包寒蝉全圆体（全量，不裁剪），雅黑只作兜底。
      字体文件缺失或被禁用时会自动回落到系统字体，界面不会坏。 */
   --font-sans: 'Chill Round', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Segoe UI', system-ui,
     -apple-system, 'Helvetica Neue', sans-serif;
